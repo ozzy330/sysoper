@@ -1,0 +1,236 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wshadow",
+      "-I../threads",
+      "-I../machine",
+      "-DTHREADS",
+      "-DHOST_x86_64",
+      "-DHOST_LINUX",
+      "-DCHANGED",
+      "-c",
+      "../threads/main.cc"
+    ],
+    "directory": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads",
+    "file": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads/main.cc"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wshadow",
+      "-I../threads",
+      "-I../machine",
+      "-DTHREADS",
+      "-DHOST_x86_64",
+      "-DHOST_LINUX",
+      "-DCHANGED",
+      "-c",
+      "../threads/scheduler.cc"
+    ],
+    "directory": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads",
+    "file": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads/scheduler.cc"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wshadow",
+      "-I../threads",
+      "-I../machine",
+      "-DTHREADS",
+      "-DHOST_x86_64",
+      "-DHOST_LINUX",
+      "-DCHANGED",
+      "-c",
+      "../threads/synch.cc"
+    ],
+    "directory": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads",
+    "file": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads/synch.cc"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wshadow",
+      "-I../threads",
+      "-I../machine",
+      "-DTHREADS",
+      "-DHOST_x86_64",
+      "-DHOST_LINUX",
+      "-DCHANGED",
+      "-c",
+      "../threads/system.cc"
+    ],
+    "directory": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads",
+    "file": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads/system.cc"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wshadow",
+      "-I../threads",
+      "-I../machine",
+      "-DTHREADS",
+      "-DHOST_x86_64",
+      "-DHOST_LINUX",
+      "-DCHANGED",
+      "-c",
+      "../threads/thread.cc"
+    ],
+    "directory": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads",
+    "file": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads/thread.cc"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wshadow",
+      "-I../threads",
+      "-I../machine",
+      "-DTHREADS",
+      "-DHOST_x86_64",
+      "-DHOST_LINUX",
+      "-DCHANGED",
+      "-c",
+      "../threads/utility.cc"
+    ],
+    "directory": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads",
+    "file": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads/utility.cc"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wshadow",
+      "-I../threads",
+      "-I../machine",
+      "-DTHREADS",
+      "-DHOST_x86_64",
+      "-DHOST_LINUX",
+      "-DCHANGED",
+      "-c",
+      "../threads/threadtest.cc"
+    ],
+    "directory": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads",
+    "file": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads/threadtest.cc"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wshadow",
+      "-I../threads",
+      "-I../machine",
+      "-DTHREADS",
+      "-DHOST_x86_64",
+      "-DHOST_LINUX",
+      "-DCHANGED",
+      "-c",
+      "../machine/interrupt.cc"
+    ],
+    "directory": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads",
+    "file": "/home/ozzy330/Documents/sysoper/NachOSx64/code/machine/interrupt.cc"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wshadow",
+      "-I../threads",
+      "-I../machine",
+      "-DTHREADS",
+      "-DHOST_x86_64",
+      "-DHOST_LINUX",
+      "-DCHANGED",
+      "-c",
+      "../machine/stats.cc"
+    ],
+    "directory": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads",
+    "file": "/home/ozzy330/Documents/sysoper/NachOSx64/code/machine/stats.cc"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wshadow",
+      "-I../threads",
+      "-I../machine",
+      "-DTHREADS",
+      "-DHOST_x86_64",
+      "-DHOST_LINUX",
+      "-DCHANGED",
+      "-c",
+      "../machine/sysdep.cc"
+    ],
+    "directory": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads",
+    "file": "/home/ozzy330/Documents/sysoper/NachOSx64/code/machine/sysdep.cc"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wshadow",
+      "-I../threads",
+      "-I../machine",
+      "-DTHREADS",
+      "-DHOST_x86_64",
+      "-DHOST_LINUX",
+      "-DCHANGED",
+      "-c",
+      "../machine/timer.cc"
+    ],
+    "directory": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads",
+    "file": "/home/ozzy330/Documents/sysoper/NachOSx64/code/machine/timer.cc"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wshadow",
+      "-I../threads",
+      "-I../machine",
+      "-DTHREADS",
+      "-DHOST_x86_64",
+      "-DHOST_LINUX",
+      "-DCHANGED",
+      "-c",
+      "../threads/preemptive.cc"
+    ],
+    "directory": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads",
+    "file": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads/preemptive.cc"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-g",
+      "-Wall",
+      "-Wshadow",
+      "-I../threads",
+      "-I../machine",
+      "-DTHREADS",
+      "-DHOST_x86_64",
+      "-DHOST_LINUX",
+      "-DCHANGED",
+      "-c",
+      "../threads/diningph.cc"
+    ],
+    "directory": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads",
+    "file": "/home/ozzy330/Documents/sysoper/NachOSx64/code/threads/diningph.cc"
+  }
+]
