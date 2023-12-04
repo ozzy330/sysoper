@@ -1,0 +1,174 @@
+	interrupts: off -> on
+
+== Tick 10 ==
+	interrupts: on -> off
+Time: 10, interrupts off
+Pending interrupts:
+End of pending interrupts
+	interrupts: off -> on
+Entering SimpleTestForking thread "Hilo 1" with func = 0x4027be, arg = 26788912
+	interrupts: on -> off
+Putting thread Hilo 1 on ready list.
+	interrupts: off -> on
+
+== Tick 20 ==
+	interrupts: on -> off
+Time: 20, interrupts off
+Pending interrupts:
+End of pending interrupts
+	interrupts: off -> on
+Forking thread "Hilo 2" with func = 0x4027be, arg = 26830208
+	interrupts: on -> off
+Putting thread Hilo 2 on ready list.
+	interrupts: off -> on
+
+== Tick 30 ==
+	interrupts: on -> off
+Time: 30, interrupts off
+Pending interrupts:
+End of pending interrupts
+	interrupts: off -> on
+Forking thread "Hilo 3" with func = 0x4027be, arg = 26871504
+	interrupts: on -> off
+Putting thread Hilo 3 on ready list.
+	interrupts: off -> on
+
+== Tick 40 ==
+	interrupts: on -> off
+Time: 40, interrupts off
+Pending interrupts:
+End of pending interrupts
+	interrupts: off -> on
+Forking thread "Hilo 4" with func = 0x4027be, arg = 26912800
+	interrupts: on -> off
+Putting thread Hilo 4 on ready list.
+	interrupts: off -> on
+
+== Tick 50 ==
+	interrupts: on -> off
+Time: 50, interrupts off
+Pending interrupts:
+End of pending interrupts
+	interrupts: off -> on
+*** thread Hilo 0 looped 0 times
+*** thread Hilo 0 looped 1 times
+*** thread Hilo 0 looped 2 times
+*** thread Hilo 0 looped 3 times
+*** thread Hilo 0 looped 4 times
+*** thread Hilo 0 looped 5 times
+*** thread Hilo 0 looped 6 times
+*** thread Hilo 0 looped 7 times
+*** thread Hilo 0 looped 8 times
+*** thread Hilo 0 looped 9 times
+>>> Thread Hilo 0 has finished
+	interrupts: on -> off
+Finishing thread "main"
+Sleeping thread "main"
+Switching from thread "main" to thread "Hilo 1"
+	interrupts: off -> on
+
+== Tick 60 ==
+	interrupts: on -> off
+Time: 60, interrupts off
+Pending interrupts:
+End of pending interrupts
+	interrupts: off -> on
+*** thread Hilo 1 looped 0 times
+*** thread Hilo 1 looped 1 times
+*** thread Hilo 1 looped 2 times
+*** thread Hilo 1 looped 3 times
+*** thread Hilo 1 looped 4 times
+*** thread Hilo 1 looped 5 times
+*** thread Hilo 1 looped 6 times
+*** thread Hilo 1 looped 7 times
+*** thread Hilo 1 looped 8 times
+*** thread Hilo 1 looped 9 times
+>>> Thread Hilo 1 has finished
+	interrupts: on -> off
+Finishing thread "Hilo 1"
+Sleeping thread "Hilo 1"
+Switching from thread "Hilo 1" to thread "Hilo 2"
+	interrupts: off -> on
+
+== Tick 70 ==
+	interrupts: on -> off
+Time: 70, interrupts off
+Pending interrupts:
+End of pending interrupts
+	interrupts: off -> on
+*** thread Hilo 2 looped 0 times
+*** thread Hilo 2 looped 1 times
+*** thread Hilo 2 looped 2 times
+*** thread Hilo 2 looped 3 times
+*** thread Hilo 2 looped 4 times
+*** thread Hilo 2 looped 5 times
+*** thread Hilo 2 looped 6 times
+*** thread Hilo 2 looped 7 times
+*** thread Hilo 2 looped 8 times
+*** thread Hilo 2 looped 9 times
+>>> Thread Hilo 2 has finished
+	interrupts: on -> off
+Finishing thread "Hilo 2"
+Sleeping thread "Hilo 2"
+Switching from thread "Hilo 2" to thread "Hilo 3"
+	interrupts: off -> on
+
+== Tick 80 ==
+	interrupts: on -> off
+Time: 80, interrupts off
+Pending interrupts:
+End of pending interrupts
+	interrupts: off -> on
+*** thread Hilo 3 looped 0 times
+*** thread Hilo 3 looped 1 times
+*** thread Hilo 3 looped 2 times
+*** thread Hilo 3 looped 3 times
+*** thread Hilo 3 looped 4 times
+*** thread Hilo 3 looped 5 times
+*** thread Hilo 3 looped 6 times
+*** thread Hilo 3 looped 7 times
+*** thread Hilo 3 looped 8 times
+*** thread Hilo 3 looped 9 times
+>>> Thread Hilo 3 has finished
+	interrupts: on -> off
+Finishing thread "Hilo 3"
+Sleeping thread "Hilo 3"
+Switching from thread "Hilo 3" to thread "Hilo 4"
+	interrupts: off -> on
+
+== Tick 90 ==
+	interrupts: on -> off
+Time: 90, interrupts off
+Pending interrupts:
+End of pending interrupts
+	interrupts: off -> on
+*** thread Hilo 4 looped 0 times
+*** thread Hilo 4 looped 1 times
+*** thread Hilo 4 looped 2 times
+*** thread Hilo 4 looped 3 times
+*** thread Hilo 4 looped 4 times
+*** thread Hilo 4 looped 5 times
+*** thread Hilo 4 looped 6 times
+*** thread Hilo 4 looped 7 times
+*** thread Hilo 4 looped 8 times
+*** thread Hilo 4 looped 9 times
+>>> Thread Hilo 4 has finished
+	interrupts: on -> off
+Finishing thread "Hilo 4"
+Sleeping thread "Hilo 4"
+Machine idling; checking for interrupts.
+Time: 90, interrupts off
+Pending interrupts:
+End of pending interrupts
+Machine idle.  No interrupts to do.
+No threads ready or runnable, and no pending interrupts.
+Assuming the program completed.
+Machine halting!
+
+Ticks: total 90, idle 0, system 90, user 0
+Disk I/O: reads 0, writes 0
+Console I/O: reads 0, writes 0
+Paging: faults 0
+Network I/O: packets received 0, sent 0
+
+Cleaning up...

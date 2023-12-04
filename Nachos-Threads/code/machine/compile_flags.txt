@@ -1,0 +1,5 @@
+-I../threads 
+-I../machine
+-I../filesys
+-I../network
+-I../userprog
