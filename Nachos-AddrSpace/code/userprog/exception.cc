@@ -24,6 +24,7 @@
 #include "copyright.h"
 #include "syscall.h"
 #include "system.h"
+#include <cstring>
 
 void returnFromSystemCall() {
 
@@ -51,37 +52,42 @@ void NachOS_Halt() { // System call 0
 void NachOS_Exit() { // System call 1
   int status = machine->ReadRegister(4);
   runningThreads->Clear(currentThread->id);
+  delete currentThread->space;
+  currentThread->Finish();
   if (status == 0) {
     printf("\nExiting successfully the user program.\n");
   } else {
     printf("\nExiting with error on the user program.\n");
   }
-  currentThread->Finish();
   returnFromSystemCall();
 }
 
-void NachosExecThread(void *filename) {
+static void NachosExecThread(void *filename) {
+  printf("AHHHHHHHHHHHHHHHH\n");
+  const char *fn = (char *)filename;
+  printf("Executing %s\n", fn);
   // Abrir el archivo name
-  const char *name = (char *)filename;
-  OpenFile *executable = fileSystem->Open(name);
+  OpenFile *executable = fileSystem->Open(fn);
   if (executable == NULL) {
-    DEBUG('a', "Can not open the file %s\n", name);
+    DEBUG('a', "Can not open the file %s\n", filename);
     return;
   }
   // Crear un addrspace nuevo
   AddrSpace *addrspace = new AddrSpace(executable);
-  addrspace->InitRegisters();
-  addrspace->RestoreState();
 
   // Remplaza el programa actual con el nuevo
   currentThread->space = addrspace;
+
+  delete executable; // close file
+
+  addrspace->InitRegisters();
+  addrspace->RestoreState();
+
   // Genera un nuevo id para el proximo programa (recicla ids)
   currentThread->id = runningThreads->SecureFind();
-  delete executable; // close file
-  // Corre el nuevo programa
-  // WARN:
-  machine->Run();
   machine->WriteRegister(2, currentThread->id);
+  // Corre el nuevo programa
+  machine->Run();
   ASSERT(false)
 }
 /*
@@ -89,9 +95,10 @@ void NachosExecThread(void *filename) {
  *  No hace un exec, hace un fork que pone a ejecutar un programa
  */
 void NachOS_Exec() { // System call 2
-  printf("Executing...\n");
   Thread *newT = new Thread("New thread for Exec");
-  newT->Fork(NachosExecThread, (void *)machine->ReadRegister(4));
+  void *filename = (void *)machine->ReadRegister(4);
+
+  newT->Fork(NachosExecThread, filename);
 }
 
 /*
@@ -194,16 +201,16 @@ void NachOS_Write() { // System call 6
  */
 void NachOS_Read() { // System call 7
   // Do the read from the already opened Unix file
-  int size = machine->ReadRegister(5);
   int dir_buffer = machine->ReadRegister(4);
-  char* buffer = (char*)&dir_buffer;
+  int size = machine->ReadRegister(5);
   int unixhandle = nachosTablita->getUnixHandle(machine->ReadRegister(6));
 
+  char buffer[size] = {0};
   int readed = ReadPartial(unixhandle, buffer, size);
+  for (int offset = 0; offset < size; offset++) {
+    machine->WriteMem(dir_buffer + offset, 1, buffer[offset]);
+  }
   machine->WriteRegister(2, readed);
-
-  // Guarda el buffer con los contenidos
-  machine->WriteRegister(4, buffer[0]);
   returnFromSystemCall();
 }
 

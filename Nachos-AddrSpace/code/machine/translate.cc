@@ -210,8 +210,7 @@ ExceptionType Machine::Translate(int virtAddr, int *physAddr, int size,
             virtAddr, pageTableSize);
       return AddressErrorException;
     } else if (!pageTable[vpn].valid) {
-      DEBUG('a', "virtual page # %d too large for page table size %d!\n",
-            virtAddr, pageTableSize);
+      DEBUG('a', "virtual page # %d not valid!\n", virtAddr);
       return PageFaultException;
     }
     entry = &pageTable[vpn];

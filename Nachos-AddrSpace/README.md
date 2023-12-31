@@ -1,7 +1,6 @@
 # Tareas por hacer en NachOS 
 
-## Llamados al sistema de NachOS
-- [x] LLlamados al sistema sin relativos en Linux (obligatorios)
+## LLlamados al sistema sin relativos en Linux (obligatorios)
  - [x] Halt
  - [x] Exit
  - [x] Exec
@@ -9,7 +8,7 @@
  - [x] Join
  - [x] Yield
 
-- [x] Llamados al sistema con similares en Linux (obligatorios)
+- Llamados al sistema con similares en Linux (obligatorios)
  - [x] Create
  - [x] Open
  - [x] Close

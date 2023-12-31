@@ -36,7 +36,7 @@ INCDIR =-I../userprog -I../threads
 # Corrects the error: dangerous relocation GP
 CFLAGS = -c $(INCDIR) -mips1 -G 0
 
-all: halt shell matmult sort
+all: halt shell matmult sort prueba1
 
 start.o: start.s ../userprog/syscall.h
 	$(CPP) $(CPPFLAGS) start.s > strt.s
@@ -67,6 +67,11 @@ matmult: matmult.o start.o
 	$(LD) $(LDFLAGS) start.o matmult.o -o matmult.coff
 	../bin/coff2noff matmult.coff matmult
 
+prueba.o: prueba1.c
+	$(CC) $(CFLAGS) -c prueba1.c
+prueba1: prueba1.o start.o
+	$(LD) $(LDFLAGS) start.o prueba1.o -o prueba1.coff
+	../bin/coff2noff prueba1.coff prueba1
 
 # Estas reglas sirven para compilar programas simples, que consistan en un unico fuente
 # Las reglas anteriores para construir los ejecutables
