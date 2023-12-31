@@ -221,6 +221,9 @@ void Cleanup() {
 
 #ifdef USER_PROGRAM
   delete machine;
+  delete nachosTablita;
+  delete runningThreads;
+  delete MapitaBits;
 #endif
 
 #ifdef FILESYS_NEEDED

@@ -26,6 +26,9 @@ public:
   // stored in the file "executable"
   AddrSpace(OpenFile *executable);
 
+  // INFO: copy data for some AddrSpace but creates a new stack
+  AddrSpace(const AddrSpace &source);
+
   // De-allocate an address space
   ~AddrSpace();
   // Initialize user-level CPU registers,
@@ -37,6 +40,10 @@ public:
 
   // info on a context switch
   void RestoreState();
+
+  TranslationEntry* getPageTable();
+  unsigned int getNumPages();
+  void addStackSpace(int size);
 
 private:
   // Assume linear page table translation for now!

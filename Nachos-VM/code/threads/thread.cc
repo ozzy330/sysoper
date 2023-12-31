@@ -141,8 +141,10 @@ void Thread::Finish() {
   interrupt->SetLevel(IntOff);
   ASSERT(this == currentThread);
 
-  DEBUG('t', "Finishing thread \"%s\"\n", getName());
-
+  DEBUG('t', "Finishing thread \"%s\" id: \n", getName());
+#ifdef USER_PROGRAM
+  runningThreads->SecureClear(currentThread->id);
+#endif
   threadToBeDestroyed = currentThread;
   Sleep(); // invokes SWITCH
            // not reached

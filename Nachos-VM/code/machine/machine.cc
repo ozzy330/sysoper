@@ -64,11 +64,10 @@ Machine::Machine(bool debug) {
   for (i = 0; i < MemorySize; i++)
     mainMemory[i] = 0;
 #ifdef USE_TLB
-  pageTable = NULL;
-  // INFO: VM tamaño de TLB = 4
   tlb = new TranslationEntry[TLBSize];
   for (i = 0; i < TLBSize; i++)
     tlb[i].valid = false;
+  pageTable = NULL;
 #else // use linear page table
   tlb = NULL;
   pageTable = NULL;

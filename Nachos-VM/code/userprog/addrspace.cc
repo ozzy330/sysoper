@@ -73,7 +73,6 @@ void ReadPages(OpenFile *executable, int firstPage, int size, int startFileAddr,
 //
 //	"executable" is the file containing the object code to load into memory
 //----------------------------------------------------------------------
-
 AddrSpace::AddrSpace(OpenFile *executable) {
   NoffHeader noffH;
   unsigned int i, size;
@@ -115,30 +114,28 @@ AddrSpace::AddrSpace(OpenFile *executable) {
   // first, set up the translation
   pageTable = new TranslationEntry[numPages];
 
+  // WARN: ensuciando páginas
   // for (int pagina = 0; pagina <= 10; pagina+=2) {
   //   MapitaBits->Mark(pagina);
   // }
 
   int free_page;
   for (i = 0; i < numPages; i++) {
-    // for now, virtual page # = phys page #
     free_page = MapitaBits->Find();
     pageTable[i].virtualPage = i;
-    // INFO:  marca las páginas físicas utilizadas (marcos de página)
     pageTable[i].physicalPage = free_page;
-    pageTable[i].valid = false;
     pageTable[i].valid = true;
-    pageTable[i].use = false;
-    pageTable[i].dirty = false;
     // if the code segment was entirely on
     // a separate page, we could set its
     // pages to be read-only
     pageTable[i].readOnly = false;
+    pageTable[i].use = false;
+    pageTable[i].dirty = false;
   }
 
   // zero out the entire address space, to zero the unitialized data segment
   // and the stack segment
-  bzero(machine->mainMemory, size);
+  // bzero(machine->mainMemory, size);
 
   // then, copy in the code and data segments into memory
   if (noffH.code.size > 0) {
@@ -158,7 +155,46 @@ AddrSpace::AddrSpace(OpenFile *executable) {
               noffH.initData.inFileAddr, pageTable, numDataPages);
     // printf("Cargado segmento de datos\n");
   }
+  // for (i = 0; i < numPages; i++) {
+  //   DEBUG('o', "VPAG: %d, PAG: %d\n", pageTable[i].virtualPage,
+  //         pageTable[i].physicalPage);
+  // }
 }
+// Crea una copia de los segmentos compartidos y crea un nuevo stack
+AddrSpace::AddrSpace(const AddrSpace &source)
+    : numPages(source.numPages) {
+
+  // Calcula el tamño del stack
+  int numStackPages = divRoundUp(UserStackSize, PageSize);
+  numPages += numStackPages;
+  this->pageTable = new TranslationEntry[numPages];
+  memcpy(pageTable, source.pageTable, sizeof(TranslationEntry) * numPages);
+
+  // Configura la traducción para el stack nuevo
+  int free_page, i;
+  for (i = numPages - numStackPages; i < numPages; i++) {
+    free_page = MapitaBits->Find();
+    pageTable[i].virtualPage = i;
+    pageTable[i].physicalPage = free_page;
+    pageTable[i].valid = true;
+    // if the code segment was entirely on
+    // a separate page, we could set its
+    // pages to be read-only
+    pageTable[i].readOnly = false;
+    pageTable[i].use = false;
+    pageTable[i].dirty = false;
+  }
+
+
+  // int i;
+  // for (i = 0; i < numPages; i++) {
+  //   DEBUG('o', "COPIA - VPAG: %d, PAG: %d\n", pageTable[i].virtualPage,
+  //         pageTable[i].physicalPage);
+  // }
+}
+
+TranslationEntry *AddrSpace::getPageTable() { return this->pageTable; }
+unsigned int AddrSpace::getNumPages() { return this->numPages; }
 
 //----------------------------------------------------------------------
 // AddrSpace::~AddrSpace
@@ -216,8 +252,6 @@ void AddrSpace::SaveState() {}
 //----------------------------------------------------------------------
 
 void AddrSpace::RestoreState() {
-#ifndef VM
   machine->pageTable = pageTable;
   machine->pageTableSize = numPages;
-#endif
 }

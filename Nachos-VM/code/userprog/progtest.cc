@@ -21,12 +21,13 @@
 //	memory, and jump to it.
 //----------------------------------------------------------------------
 
+// INFO: inicia un proceso
 void StartProcess(const char *filename) {
   OpenFile *executable = fileSystem->Open(filename);
   AddrSpace *space;
 
   if (executable == NULL) {
-    printf("Unable to open file %s\n", filename);
+    DEBUG('u',"Unable to open file %s\n", filename);
     return;
   }
   space = new AddrSpace(executable);
@@ -37,9 +38,13 @@ void StartProcess(const char *filename) {
 
   space->InitRegisters(); // set the initial register values
   space->RestoreState();  // load page table register
+  
+  
+  currentThread->id = runningThreads->SecureFind();
 
   // printf("Executing %s\n", filename);
   // NOTE: 0 inicia la simulación
+  DEBUG('u',"Running ROOT thread %d\n", currentThread->id);
   machine->Run(); // jump to the user progam
   ASSERT(false);  // machine->Run never returns;
                   // the address space exits

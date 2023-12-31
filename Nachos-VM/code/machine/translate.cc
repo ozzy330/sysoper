@@ -133,7 +133,6 @@ bool Machine::ReadMem(int addr, int size, int *value) {
 bool Machine::WriteMem(int addr, int size, int value) {
   ExceptionType exception;
   int physicalAddress;
-  // WARN: escribir en bitmap la canidad de páginas ahora ocupadas
 
   DEBUG('a', "Writing VA 0x%x, size %d, value 0x%x\n", addr, size, value);
 
@@ -204,46 +203,28 @@ ExceptionType Machine::Translate(int virtAddr, int *physAddr, int size,
   vpn = (unsigned)virtAddr / PageSize;
   offset = (unsigned)virtAddr % PageSize;
 
-  // WARN: Se ejecuta solo si existe una PT
   if (tlb == NULL) { // => page table => vpn is index into table
     if (vpn >= pageTableSize) {
       DEBUG('a', "virtual page # %d too large for page table size %d!\n",
             virtAddr, pageTableSize);
       return AddressErrorException;
     } else if (!pageTable[vpn].valid) {
-      // INFO: VM la página virual no es valida. Hay que cargarla en memoria
-      // fisica
-      DEBUG('a', "virtual page # %d too large for page table size %d!\n",
-            virtAddr, pageTableSize);
+      DEBUG('a', "virtual page # %d not valid!\n", virtAddr);
+      MapitaBits->Print();
       return PageFaultException;
     }
     entry = &pageTable[vpn];
-  // WARN: Se ejecuta solo si existe una TLB
   } else {
-    for (entry = NULL, i = 0; i < TLBSize; i++) {
+    for (entry = NULL, i = 0; i < TLBSize; i++)
       if (tlb[i].valid && (tlb[i].virtualPage == (int)vpn)) {
         entry = &tlb[i]; // FOUND!
         break;
       }
-    }
     if (entry == NULL) { // not found
-      // INFO: VM no encontró la página en la TLB abrá que
-      // buscarla en la memoria
       DEBUG('a', "*** no valid TLB entry found for this virtual page!\n");
-      // WARN: importante...
-      // really, this is a TLB fault,
-      // the page may be in memory,
-      // but not in the TLB
-
-      // INFO: Como no encontro la página en la TLB, hay que cargarla
-      for (entry = NULL, i = 0; i < TLBSize; i++) {
-        if (!tlb[i].valid) {
-          tlb[i].virtualPage = (int)vpn;
-          tlb[i].physicalPage = pageFrame * PageSize + offset;
-          break;
-        }
-      }
-      return PageFaultException;
+      return PageFaultException; // really, this is a TLB fault,
+                                 // the page may be in memory,
+                                 // but not in the TLB
     }
   }
 
@@ -259,11 +240,8 @@ ExceptionType Machine::Translate(int virtAddr, int *physAddr, int size,
     DEBUG('a', "*** frame %d > %d!\n", pageFrame, NumPhysPages);
     return BusErrorException;
   }
-  // INFO: VM si la página existe se marca como en uso, y se marca como sucia si
-  // se escribió en ella
   entry->use = true; // set the use, dirty bits
   if (writing) {
-    // INFO: VM hay que guardarla en SWAP
     entry->dirty = true;
   }
   *physAddr = pageFrame * PageSize + offset;
