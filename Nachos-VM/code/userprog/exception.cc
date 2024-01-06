@@ -77,7 +77,7 @@ void NachOS_Exit() { // System call 1
 
 void NachosExecThread(void *fn) {
   DEBUG('u', "current thread id = %d", currentThread->id);
-  char *filename = (char*)fn;
+  char *filename = (char *)fn;
   OpenFile *executable = fileSystem->Open(filename);
   AddrSpace *space;
   if (executable == NULL) {
@@ -196,7 +196,7 @@ void NachOS_Write() { // System call 6
   }
   // Update simulation stats, see details in Statistics class in
   // machine/stats.cc
-  stats->numDiskWrites += size;
+  // stats->numDiskWrites += size;
   // Console->V();
 
   returnFromSystemCall(); // Update the PC registers
@@ -216,7 +216,7 @@ void NachOS_Read() { // System call 7
   for (int offset = 0; offset < size; offset++) {
     machine->WriteMem(dir_buffer + offset, 1, buffer[offset]);
   }
-  stats->numDiskReads += size;
+  // stats->numDiskReads += size;
   machine->WriteRegister(2, readed);
   returnFromSystemCall();
 }
@@ -235,12 +235,11 @@ void NachOS_Close() { // System call 8
 // This function is similar to "StartProcess" in "progtest.cc" file under
 // "userprog" Requires a correct AddrSpace setup to work well
 void NachosForkThread(void *p) { // for 64 bits version
-  AddrSpace *space;
+  // AddrSpace *space;
 
-  space = currentThread->space;
-  space->InitRegisters(); // set the initial register values
-  space->RestoreState();  // load page table register
-
+  currentThread->space->InitRegisters(); // set the initial register values
+  currentThread->space->RestoreState();  // load page table register
+  //
   // Set the return address for this thread to the same as the main thread
   // This will lead this thread to call the exit system call and finish
   machine->WriteRegister(RetAddrReg, 4);
@@ -263,7 +262,8 @@ void NachOS_Fork() { // System call 9
   // We need to share the Open File Table structure with this new child
 
   // Child and father will also share the same address space, except for the
-  // stack Text, init data and uninit data are shared, a new stack area must be
+  // stack
+  // Text, init data and uninit data are shared, a new stack area must be
   // created for the new child We suggest the use of a new constructor in
   // AddrSpace class, This new constructor will copy the shared segments (space
   // variable) from currentThread, passed as a parameter, and create a new stack
@@ -536,6 +536,13 @@ void ExceptionHandler(ExceptionType which) {
     break;
 
   case PageFaultException: {
+    // machine->WriteRegister(PrevPCReg,
+    //                        machine->ReadRegister(PrevPCReg) - 4); // PrevPC
+    //                        <- PrevPC - 4
+    // machine->WriteRegister(PCReg,
+    //                        machine->ReadRegister(NextPCReg)); // PC <- PrevPC
+    // machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)); //
+    // NextPC <- PC returnFromSystemCall();
     break;
   }
 

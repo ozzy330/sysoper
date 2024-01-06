@@ -27,7 +27,7 @@ void StartProcess(const char *filename) {
   AddrSpace *space;
 
   if (executable == NULL) {
-    DEBUG('u',"Unable to open file %s\n", filename);
+    DEBUG('u', "Unable to open file %s\n", filename);
     return;
   }
   space = new AddrSpace(executable);
@@ -37,14 +37,14 @@ void StartProcess(const char *filename) {
   delete executable; // close file
 
   space->InitRegisters(); // set the initial register values
+  // WARN: VM crea la tabla de paginas para la maquina
   space->RestoreState();  // load page table register
-  
-  
+
   currentThread->id = runningThreads->SecureFind();
 
   // printf("Executing %s\n", filename);
   // NOTE: 0 inicia la simulación
-  DEBUG('u',"Running ROOT thread %d\n", currentThread->id);
+  DEBUG('u', "Running ROOT thread %d\n", currentThread->id);
   machine->Run(); // jump to the user progam
   ASSERT(false);  // machine->Run never returns;
                   // the address space exits
@@ -75,6 +75,9 @@ static void WriteDone(void *arg) { writeDone->V(); }
 void ConsoleTest(const char *in, const char *out) {
   char ch;
 
+  // Console(const char *readFile, const char *writeFile,
+  //         VoidFunctionPtr readAvail, VoidFunctionPtr writeDone,
+  //         void* callArg);
   console = new Console(in, out, ReadAvail, WriteDone, 0);
   readAvail = new Semaphore("read avail", 0);
   writeDone = new Semaphore("write done", 0);

@@ -95,9 +95,9 @@ USERPROG_C = ../userprog/addrspace.cc\
 USERPROG_O = addrspace.o bitmap.o exception.o progtest.o console.o machine.o \
 	mipssim.o translate.o nachostablita.o
 
-VM_H = 
-VM_C = 
-VM_O = 
+VM_H = ../machine/disk.h
+VM_C = ../machine/disk.cc
+VM_O = disk.o
 
 FILESYS_H =../filesys/directory.h \
 	../filesys/filehdr.h\

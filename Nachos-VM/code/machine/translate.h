@@ -40,6 +40,9 @@ public:
                     // page is referenced or modified.
   bool dirty;       // This bit is set by the hardware every time the
                     // page is modified.
+  // NOTE: VM guarda el sector en SWAP donde se encuentra la página
+  // como el tamaño del sector = tamaño de página, no hay trabajo extra
+  int swapSector;
 };
 
 #endif

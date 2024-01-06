@@ -67,12 +67,6 @@ matmult: matmult.o start.o
 	$(LD) $(LDFLAGS) start.o matmult.o -o matmult.coff
 	../bin/coff2noff matmult.coff matmult
 
-prueba.o: prueba1.c
-	$(CC) $(CFLAGS) -c prueba1.c
-prueba1: prueba1.o start.o
-	$(LD) $(LDFLAGS) start.o prueba1.o -o prueba1.coff
-	../bin/coff2noff prueba1.coff prueba1
-
 # Estas reglas sirven para compilar programas simples, que consistan en un unico fuente
 # Las reglas anteriores para construir los ejecutables
 # halt, shell, sort y matmult se podrian suprimir

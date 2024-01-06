@@ -1,4 +1,4 @@
-# Tareas por hacer en NachOS 
+# Lista de tareas por hacer en NachOS 
 
 ## LLlamados al sistema sin relativos en Linux (obligatorios)
  - [x] Halt
@@ -8,13 +8,18 @@
  - [x] Join
  - [x] Yield
 
-- Llamados al sistema con similares en Linux (obligatorios)
+##  Llamados al sistema con similares en Linux (obligatorios)
  - [x] Create
  - [x] Open
  - [x] Close
  - [x] Read
  - [x] Write
  - [x] Tabla de archivos abiertos
+
+##  Memoria virtual
+- [ ] TLB funcional
+- [ ] SWAP
+- [ ] Algoritmos de remplazo `Second Chance`
 
 <!-- - [ ] Llamados al sistema para Sockets (obligatorios para el cliente) -->
 <!--  - [ ] SC_Socket, SC_Connect, Read, Write (client) -->

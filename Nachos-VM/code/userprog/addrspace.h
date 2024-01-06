@@ -41,11 +41,10 @@ public:
   // info on a context switch
   void RestoreState();
 
-  TranslationEntry* getPageTable();
-  unsigned int getNumPages();
-  void addStackSpace(int size);
+  // Devuelve la pagina con sus meta datos
+  TranslationEntry *Entry(unsigned virtpage);
 
-private:
+// private:
   // Assume linear page table translation for now!
   TranslationEntry *pageTable;
 

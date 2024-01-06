@@ -28,7 +28,7 @@
 
 // Definitions related to the size, and format of user memory
 
-// NOTE: SectorSize = 128 bytes
+// NOTE: VM paginas del tamaño de un sector
 const int PageSize = SectorSize; 	// set the page size equal to
 					// the disk sector size, for
 					// simplicity
@@ -36,6 +36,7 @@ const int PageSize = SectorSize; 	// set the page size equal to
 const int MaxNumProcesses = 128;
 const int NumPhysPages = 32;
 const int MemorySize = NumPhysPages * PageSize;
+// INFO: VM TLB size = 4
 const int TLBSize = 4;			// if there is a TLB, make it small
 
 enum ExceptionType { NoException,           // Everything ok!

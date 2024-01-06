@@ -34,6 +34,9 @@
 #include "machine.h"
 #include "system.h"
 
+extern const int PRUEBA = 18;
+extern int SALIR = 0;
+
 // Routines for converting Words and Short Words to and from the
 // simulated machine's format of little endian.  These end up
 // being NOPs when the host machine is also little endian (DEC and Intel).
@@ -210,23 +213,74 @@ ExceptionType Machine::Translate(int virtAddr, int *physAddr, int size,
       return AddressErrorException;
     } else if (!pageTable[vpn].valid) {
       DEBUG('a', "virtual page # %d not valid!\n", virtAddr);
-      MapitaBits->Print();
+      // MapitaBits->Print();
       return PageFaultException;
     }
-    entry = &pageTable[vpn];
+
+    entry = currentThread->space->Entry(vpn);
+    // entry = &pageTable[vpn];
+    DEBUG('a', "Encontrada la pagina virtual %d\n", vpn);
+
   } else {
-    for (entry = NULL, i = 0; i < TLBSize; i++)
+    for (entry = NULL, i = 0; i < TLBSize; i++) {
       if (tlb[i].valid && (tlb[i].virtualPage == (int)vpn)) {
         entry = &tlb[i]; // FOUND!
         break;
       }
+    }
     if (entry == NULL) { // not found
-      DEBUG('a', "*** no valid TLB entry found for this virtual page!\n");
-      return PageFaultException; // really, this is a TLB fault,
-                                 // the page may be in memory,
-                                 // but not in the TLB
+#ifdef VM
+      DEBUG('a', "Buscando pagina para %s\n", currentThread->getName());
+      // NOTE: VM se busca la página en la tabla de paginas del proceso
+      entry = currentThread->space->Entry((int)vpn);
+      if (entry == NULL) {
+        DEBUG('f', "There is no virtual page %d\n", (int)vpn);
+        return BusErrorException;
+      }
+      if (entry->valid) {
+        DEBUG('a', "Page is on memory\n");
+        //  NOTE: VM  Luego se agrega a la TLB, si esta llena se remplaza
+        //  (Second Chance)
+        DEBUG('a', "Agregando pagina virtual %d en TLB\n", (int)vpn);
+        tlb[0] = *entry;
+        tlb[0].valid = true;
+      } else {
+        // NOTE: VM Si no está, se busca en el SWAP
+        DEBUG('a', "Buscando pagina virtual %d en SWAP\n", (int)vpn);
+        // char readed[SectorSize] = {0};
+        // swapDone->P();
+        // swap->ReadRequest(entry->swapSector, readed);
+        // NOTE: VM Cuando se encuentre en el SWAP, se pasa a la tabla de
+        // paginas
+        entry->physicalPage = MapitaBits->SecureFind();
+        // DEBUG('o', "SWAP: \n");
+        int page = entry->physicalPage * PageSize;
+        int sector = entry->swapSector * SectorSize;
+        // for (int byte = 0; byte < SectorSize; byte++) {
+        //   this->mainMemory[page + byte] = readed[byte];
+        //   DEBUG('o', "%x", readed[byte]);
+        // }
+        // DEBUG('o', "\n");
+        for (int byte = 0; byte < SectorSize; byte++) {
+          this->mainMemory[page + byte] = SwapSpace[sector + byte];
+        }
+        entry->valid = true;
+
+        DEBUG('a', "*** no valid TLB entry found for this virtual page!\n");
+        return PageFaultException;
+      }
+
+#endif
     }
   }
+#ifdef VM
+  // if (entry->virtualPage == 1 && offset == 48) {
+  //   int page = entry->physicalPage * PageSize;
+  //   char readed[SectorSize] = {0};
+  //   swapDone->P();
+  //   swap->ReadRequest(entry->swapSector, readed);
+  // }
+#endif
 
   if (entry->readOnly && writing) { // trying to write to a read-only page
     DEBUG('a', "%d mapped read-only at %d in TLB!\n", virtAddr, i);
@@ -245,7 +299,19 @@ ExceptionType Machine::Translate(int virtAddr, int *physAddr, int size,
     entry->dirty = true;
   }
   *physAddr = pageFrame * PageSize + offset;
+  DEBUG('f', "VPN: %d PAG: %d SEC: %d OFFS: %d \n", entry->virtualPage,
+        entry->physicalPage, entry->swapSector, offset);
+  int page = entry->physicalPage * PageSize;
+  for (int byte = 0; byte < SectorSize; byte++) {
+    DEBUG('f', "%x", this->mainMemory[page + byte]);
+  }
+  DEBUG('f', "\n");
+  // MapitaBits->Print();
   ASSERT((*physAddr >= 0) && ((*physAddr + size) <= MemorySize));
   DEBUG('a', "phys addr = 0x%x\n", *physAddr);
+  SALIR++;
+  // if (SALIR == PRUEBA) {
+  //   return BusErrorException;
+  // }
   return NoException;
 }

@@ -22,7 +22,7 @@ Timer *timer;                // the hardware timer device,
 
 // 2007, Jose Miguel Santos Espino
 PreemptiveScheduler *preemptiveScheduler = NULL;
-const long long DEFAULT_TIME_SLICE = 50000; 
+const long long DEFAULT_TIME_SLICE = 50000;
 
 #ifdef FILESYS_NEEDED
 FileSystem *fileSystem;
@@ -37,7 +37,7 @@ SynchDisk *synchDisk;
 // user program memory and registers
 Machine *machine;
 
-// Definicion del mapa de bits para el procesador
+// Definicion del mapa de bits para la memoria
 BitMap *MapitaBits;
 
 // Definicion para tabla de archivso abiertos
@@ -45,6 +45,19 @@ NachosOpenFilesTable *nachosTablita;
 
 // Definicion de control para hilos abiertos
 BitMap *runningThreads;
+
+#endif
+
+#ifdef VM
+// INFO: VM inicializacion de región de swap
+Disk *swap;
+Semaphore *swapDone;
+BitMap *swapSectors;
+// NOTE: cada vez que se termina de utilizar el swap se llama a esta function
+// que libera la maquina para que pueda continuar trabajando
+static void SwapAvailable(void *arg) { swapDone->V(); };
+int SwapSize;
+char *SwapSpace;
 
 #endif
 
@@ -108,6 +121,24 @@ void Initialize(int argc, char **argv) {
   // INFO: Inicializacion de control para hilos abiertos
   runningThreads = new BitMap(MaxNumProcesses);
 #endif
+
+#ifdef VM
+  // INFO: VM inicializacion de region de swap
+  swap = new Disk("SWAP space", SwapAvailable, 0);
+  // INFO: VM inicializacion bitmap para saber que sectores están en uso
+  // swapSectors = new BitMap(NumSectors);
+  // INFO: VM Permite que se pueda continuar la ejecucion despues de leer o
+  // escribir a disco (SWAP)
+  swapDone = new Semaphore("SWAP available", 1);
+
+  SwapSize = 128;
+  SwapSpace = new char[SwapSize * SectorSize];
+  for (int i = 0; i < SwapSize * SectorSize; i++)
+    SwapSpace[i] = 0;
+  swapSectors = new BitMap(SwapSize);
+
+#endif
+
 #ifdef FILESYS_NEEDED
   bool format = false; // format disk
 #endif
@@ -224,6 +255,12 @@ void Cleanup() {
   delete nachosTablita;
   delete runningThreads;
   delete MapitaBits;
+#endif
+
+#ifdef VM
+  delete swapDone;
+  delete swap;
+  delete swapSectors;
 #endif
 
 #ifdef FILESYS_NEEDED

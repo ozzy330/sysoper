@@ -66,6 +66,7 @@ Machine::Machine(bool debug) {
 #ifdef USE_TLB
   tlb = new TranslationEntry[TLBSize];
   for (i = 0; i < TLBSize; i++)
+    // INFO: VM tlb inicializa sus datos con valid = false
     tlb[i].valid = false;
   pageTable = NULL;
 #else // use linear page table

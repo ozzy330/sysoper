@@ -95,8 +95,9 @@ void Machine::OneInstruction(Instruction *instr) {
   int nextLoadValue = 0;
 
   // Fetch instruction
-  if (!machine->ReadMem(registers[PCReg], 4, &raw))
+  if (!machine->ReadMem(registers[PCReg], 4, &raw)) {
     return; // exception occurred
+  }
   instr->value = raw;
   instr->Decode();
 

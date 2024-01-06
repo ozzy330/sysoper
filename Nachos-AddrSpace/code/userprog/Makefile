@@ -839,7 +839,8 @@ exception.o: ../userprog/exception.cc /usr/include/stdc-predef.h \
  ../machine/disk.h ../threads/scheduler.h ../threads/list.h \
  ../machine/interrupt.h ../threads/list.h ../machine/stats.h \
  ../machine/timer.h ../userprog/bitmap.h ../filesys/openfile.h \
- ../threads/synch.h ../userprog/nachostablita.h ../userprog/bitmap.h
+ ../threads/synch.h ../userprog/nachostablita.h ../userprog/bitmap.h \
+ /usr/include/c++/13/cstring
 progtest.o: ../userprog/progtest.cc /usr/include/stdc-predef.h \
  ../userprog/addrspace.h ../threads/copyright.h ../filesys/filesys.h \
  ../filesys/openfile.h ../threads/utility.h ../threads/copyright.h \
