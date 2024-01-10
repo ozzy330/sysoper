@@ -3,3 +3,4 @@
 -I../filesys
 -I../network
 -I../userprog
+-I../vm

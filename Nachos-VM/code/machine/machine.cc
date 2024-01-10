@@ -65,6 +65,8 @@ Machine::Machine(bool debug) {
     mainMemory[i] = 0;
 #ifdef USE_TLB
   tlb = new TranslationEntry[TLBSize];
+  nextTLB = 0;
+  nextMem = 0;
   for (i = 0; i < TLBSize; i++)
     // INFO: VM tlb inicializa sus datos con valid = false
     tlb[i].valid = false;

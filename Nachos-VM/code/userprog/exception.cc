@@ -37,8 +37,8 @@ void returnFromSystemCall() {
 } // returnFromSystemCall
 
 // Lee 'size' bytes desde la memoria en la direccion 'address'
-char *NachosReadMem(int size, int address) {
-  char *buffer = new char[size];
+const char *NachosReadMem(int size, int address) {
+  const char *buffer = new char[size];
   for (int i = 0; i < size; i++) {
     machine->ReadMem(address + i, 1, (int *)&buffer[i]);
     if (buffer[i] == '\0') {
@@ -107,7 +107,7 @@ void NachOS_Exec() { // System call 2
   newT->id = runningThreads->SecureFind();
   DEBUG('u', "Running thread %d\n", currentThread->id);
   machine->WriteRegister(2, newT->id);
-  char *filename = NachosReadMem(100, machine->ReadRegister(4));
+  const char *filename = NachosReadMem(100, machine->ReadRegister(4));
   newT->Fork(NachosExecThread, (void *)filename);
   returnFromSystemCall();
 }
@@ -159,11 +159,29 @@ void NachOS_Open() {
  *  System call interface: OpenFileId Write( char *, int, OpenFileId )
  */
 void NachOS_Write() { // System call 6
-  char *buffer = NULL;
+  const char *buffer = NULL;
   int size = machine->ReadRegister(5); // Read size to write
+  int addr = machine->ReadRegister(4); // addres to read
 
-  buffer = NachosReadMem(size, machine->ReadRegister(4));
+  buffer = NachosReadMem(size, addr);
   OpenFileId descriptor = machine->ReadRegister(6); // Read file descriptor
+
+  int vpn = (unsigned)addr / PageSize;
+  int offset = (unsigned)addr % PageSize;
+  TranslationEntry *entry = currentThread->space->Entry(vpn);
+  DEBUG('q', "Escrito a memoria [%d - %d] %s\n", vpn, offset, buffer);
+  for (int offs = 0; offs < SectorSize; offs++) {
+    DEBUG('q', "%x", machine->mainMemory[(entry->physicalPage * PageSize + offset) + offs]);
+  }
+  DEBUG('q', "\n");
+
+#ifdef VM
+  DEBUG('q', "Escrito a swap [%d - %d] %s\n", vpn, offset, buffer);
+  for (int offs = 0; offs < SectorSize; offs++) {
+    DEBUG('q', "%x", swapSpace[(entry->swapSector * SectorSize + offset) + offs]);
+  }
+  DEBUG('q', "\n");
+#endif
 
   // INFO: los archivos 0, 1, 2 están reservados
 
@@ -196,7 +214,7 @@ void NachOS_Write() { // System call 6
   }
   // Update simulation stats, see details in Statistics class in
   // machine/stats.cc
-  // stats->numDiskWrites += size;
+  stats->numDiskWrites += size;
   // Console->V();
 
   returnFromSystemCall(); // Update the PC registers
@@ -211,12 +229,13 @@ void NachOS_Read() { // System call 7
   int size = machine->ReadRegister(5);
   int unixhandle = nachosTablita->getUnixHandle(machine->ReadRegister(6));
 
-  char buffer[size] = {0};
+  char buffer[size];
   int readed = ReadPartial(unixhandle, buffer, size);
   for (int offset = 0; offset < size; offset++) {
     machine->WriteMem(dir_buffer + offset, 1, buffer[offset]);
   }
-  // stats->numDiskReads += size;
+  DEBUG('q', "Leido de memoria [%d] %s\n", dir_buffer, buffer);
+  stats->numDiskReads += size;
   machine->WriteRegister(2, readed);
   returnFromSystemCall();
 }
@@ -535,16 +554,9 @@ void ExceptionHandler(ExceptionType which) {
     }
     break;
 
-  case PageFaultException: {
-    // machine->WriteRegister(PrevPCReg,
-    //                        machine->ReadRegister(PrevPCReg) - 4); // PrevPC
-    //                        <- PrevPC - 4
-    // machine->WriteRegister(PCReg,
-    //                        machine->ReadRegister(NextPCReg)); // PC <- PrevPC
-    // machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg)); //
-    // NextPC <- PC returnFromSystemCall();
+  case PageFaultException: 
     break;
-  }
+  
 
   case ReadOnlyException:
     printf("Read Only exception (%d)\n", which);

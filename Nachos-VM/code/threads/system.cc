@@ -46,6 +46,8 @@ NachosOpenFilesTable *nachosTablita;
 // Definicion de control para hilos abiertos
 BitMap *runningThreads;
 
+// INFO: VM mantiene registro de paginas referenciadas de memoria
+BitMap *MemRef;
 #endif
 
 #ifdef VM
@@ -57,8 +59,10 @@ BitMap *swapSectors;
 // que libera la maquina para que pueda continuar trabajando
 static void SwapAvailable(void *arg) { swapDone->V(); };
 int SwapSize;
-char *SwapSpace;
+char *swapSpace;
 
+// INFO: VM mantiene registro de paginas referenciadas en TLB
+BitMap *TLBRef;
 #endif
 
 #ifdef NETWORK
@@ -120,6 +124,7 @@ void Initialize(int argc, char **argv) {
   nachosTablita = new NachosOpenFilesTable();
   // INFO: Inicializacion de control para hilos abiertos
   runningThreads = new BitMap(MaxNumProcesses);
+  MemRef= new BitMap(NumPhysPages);
 #endif
 
 #ifdef VM
@@ -131,12 +136,13 @@ void Initialize(int argc, char **argv) {
   // escribir a disco (SWAP)
   swapDone = new Semaphore("SWAP available", 1);
 
-  SwapSize = 128;
-  SwapSpace = new char[SwapSize * SectorSize];
+  SwapSize = 64;
+  swapSpace = new char[SwapSize * SectorSize];
   for (int i = 0; i < SwapSize * SectorSize; i++)
-    SwapSpace[i] = 0;
+    swapSpace[i] = 0;
   swapSectors = new BitMap(SwapSize);
 
+  TLBRef = new BitMap(TLBSize);
 #endif
 
 #ifdef FILESYS_NEEDED

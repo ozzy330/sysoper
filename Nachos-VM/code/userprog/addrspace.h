@@ -44,7 +44,10 @@ public:
   // Devuelve la pagina con sus meta datos
   TranslationEntry *Entry(unsigned virtpage);
 
-// private:
+  // Implementa un algoritmo de remplazo de paginas
+  void secondChanceMem(TranslationEntry *vpn);
+
+private:
   // Assume linear page table translation for now!
   TranslationEntry *pageTable;
 

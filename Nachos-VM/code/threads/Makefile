@@ -59,9 +59,9 @@ main.o: ../threads/main.cc /usr/include/stdc-predef.h \
  /usr/include/bits/types/FILE.h /usr/include/bits/types/struct_FILE.h \
  /usr/include/bits/types/cookie_io_functions_t.h \
  /usr/include/bits/stdio_lim.h /usr/include/string.h \
- /usr/include/strings.h ../threads/system.h ../threads/thread.h \
- ../threads/scheduler.h ../threads/list.h ../machine/interrupt.h \
- ../threads/list.h ../machine/stats.h ../machine/timer.h \
+ /usr/include/strings.h ../threads/system.h ../machine/interrupt.h \
+ ../threads/list.h ../threads/scheduler.h ../threads/list.h \
+ ../threads/thread.h ../machine/stats.h ../machine/timer.h \
  ../threads/utility.h
 scheduler.o: ../threads/scheduler.cc /usr/include/stdc-predef.h \
  ../threads/copyright.h ../threads/scheduler.h ../threads/list.h \
@@ -149,11 +149,12 @@ synch.o: ../threads/synch.cc /usr/include/stdc-predef.h \
  /usr/include/bits/types/cookie_io_functions_t.h \
  /usr/include/bits/stdio_lim.h /usr/include/string.h \
  /usr/include/strings.h ../threads/thread.h ../threads/system.h \
- ../threads/scheduler.h ../machine/interrupt.h ../threads/list.h \
+ ../machine/interrupt.h ../threads/list.h ../threads/scheduler.h \
  ../machine/stats.h ../machine/timer.h ../threads/utility.h
 system.o: ../threads/system.cc /usr/include/stdc-predef.h \
- ../threads/system.h ../threads/copyright.h ../threads/utility.h \
- ../machine/sysdep.h ../threads/copyright.h /usr/include/c++/13/stdlib.h \
+ ../threads/system.h ../threads/copyright.h ../machine/interrupt.h \
+ ../threads/copyright.h ../threads/list.h ../threads/utility.h \
+ ../machine/sysdep.h /usr/include/c++/13/stdlib.h \
  /usr/include/c++/13/cstdlib \
  /usr/include/c++/13/x86_64-redhat-linux/bits/c++config.h \
  /usr/include/bits/wordsize.h \
@@ -192,10 +193,9 @@ system.o: ../threads/system.cc /usr/include/stdc-predef.h \
  /usr/include/bits/types/FILE.h /usr/include/bits/types/struct_FILE.h \
  /usr/include/bits/types/cookie_io_functions_t.h \
  /usr/include/bits/stdio_lim.h /usr/include/string.h \
- /usr/include/strings.h ../threads/thread.h ../threads/scheduler.h \
- ../threads/list.h ../machine/interrupt.h ../threads/list.h \
- ../machine/stats.h ../machine/timer.h ../threads/utility.h \
- ../threads/preemptive.h
+ /usr/include/strings.h ../threads/scheduler.h ../threads/list.h \
+ ../threads/thread.h ../machine/stats.h ../machine/timer.h \
+ ../threads/utility.h ../threads/preemptive.h
 thread.o: ../threads/thread.cc /usr/include/stdc-predef.h \
  ../threads/thread.h ../threads/copyright.h ../threads/utility.h \
  ../machine/sysdep.h ../threads/copyright.h /usr/include/c++/13/stdlib.h \
@@ -238,8 +238,8 @@ thread.o: ../threads/thread.cc /usr/include/stdc-predef.h \
  /usr/include/bits/types/cookie_io_functions_t.h \
  /usr/include/bits/stdio_lim.h /usr/include/string.h \
  /usr/include/strings.h ../threads/switch.h ../threads/synch.h \
- ../threads/list.h ../threads/system.h ../threads/scheduler.h \
- ../machine/interrupt.h ../threads/list.h ../machine/stats.h \
+ ../threads/list.h ../threads/system.h ../machine/interrupt.h \
+ ../threads/list.h ../threads/scheduler.h ../machine/stats.h \
  ../machine/timer.h ../threads/utility.h
 utility.o: ../threads/utility.cc /usr/include/stdc-predef.h \
  ../threads/copyright.h ../threads/utility.h ../machine/sysdep.h \
@@ -326,7 +326,7 @@ threadtest.o: ../threads/threadtest.cc /usr/include/stdc-predef.h \
  /usr/include/bits/types/cookie_io_functions_t.h \
  /usr/include/bits/stdio_lim.h /usr/include/string.h \
  /usr/include/strings.h ../threads/thread.h ../threads/system.h \
- ../threads/scheduler.h ../machine/interrupt.h ../threads/list.h \
+ ../machine/interrupt.h ../threads/list.h ../threads/scheduler.h \
  ../machine/stats.h ../machine/timer.h ../threads/utility.h \
  /usr/include/unistd.h /usr/include/bits/posix_opt.h \
  /usr/include/bits/environments.h /usr/include/bits/confname.h \
@@ -416,8 +416,8 @@ interrupt.o: ../machine/interrupt.cc /usr/include/stdc-predef.h \
  /usr/include/bits/types/FILE.h /usr/include/bits/types/struct_FILE.h \
  /usr/include/bits/types/cookie_io_functions_t.h \
  /usr/include/bits/stdio_lim.h /usr/include/string.h \
- /usr/include/strings.h ../threads/system.h ../threads/thread.h \
- ../threads/scheduler.h ../threads/list.h ../machine/interrupt.h \
+ /usr/include/strings.h ../threads/system.h ../machine/interrupt.h \
+ ../threads/scheduler.h ../threads/list.h ../threads/thread.h \
  ../machine/stats.h ../machine/timer.h ../threads/utility.h
 sysdep.o: ../machine/sysdep.cc /usr/include/stdc-predef.h \
  ../threads/copyright.h /usr/include/signal.h /usr/include/features.h \
@@ -492,8 +492,8 @@ sysdep.o: ../machine/sysdep.cc /usr/include/stdc-predef.h \
  /usr/include/alloca.h /usr/include/bits/stdlib-float.h \
  /usr/include/c++/13/bits/std_abs.h ../machine/interrupt.h \
  ../threads/list.h ../threads/copyright.h ../threads/utility.h \
- ../machine/sysdep.h ../threads/system.h ../threads/thread.h \
- ../threads/scheduler.h ../threads/list.h ../machine/interrupt.h \
+ ../machine/sysdep.h ../threads/system.h ../machine/interrupt.h \
+ ../threads/scheduler.h ../threads/list.h ../threads/thread.h \
  ../machine/stats.h ../machine/timer.h ../threads/utility.h
 stats.o: ../machine/stats.cc /usr/include/stdc-predef.h \
  ../threads/copyright.h ../threads/utility.h ../threads/copyright.h \
@@ -578,14 +578,15 @@ timer.o: ../machine/timer.cc /usr/include/stdc-predef.h \
  /usr/include/bits/types/FILE.h /usr/include/bits/types/struct_FILE.h \
  /usr/include/bits/types/cookie_io_functions_t.h \
  /usr/include/bits/stdio_lim.h /usr/include/string.h \
- /usr/include/strings.h ../threads/system.h ../threads/utility.h \
- ../threads/thread.h ../threads/scheduler.h ../threads/list.h \
- ../machine/interrupt.h ../threads/list.h ../machine/stats.h \
+ /usr/include/strings.h ../threads/system.h ../machine/interrupt.h \
+ ../threads/list.h ../threads/utility.h ../threads/scheduler.h \
+ ../threads/list.h ../threads/thread.h ../machine/stats.h \
  ../machine/timer.h
 preemptive.o: ../threads/preemptive.cc /usr/include/stdc-predef.h \
  ../threads/preemptive.h ../threads/system.h ../threads/copyright.h \
- ../threads/utility.h ../machine/sysdep.h ../threads/copyright.h \
- /usr/include/c++/13/stdlib.h /usr/include/c++/13/cstdlib \
+ ../machine/interrupt.h ../threads/copyright.h ../threads/list.h \
+ ../threads/utility.h ../machine/sysdep.h /usr/include/c++/13/stdlib.h \
+ /usr/include/c++/13/cstdlib \
  /usr/include/c++/13/x86_64-redhat-linux/bits/c++config.h \
  /usr/include/bits/wordsize.h \
  /usr/include/c++/13/x86_64-redhat-linux/bits/os_defines.h \
@@ -623,10 +624,9 @@ preemptive.o: ../threads/preemptive.cc /usr/include/stdc-predef.h \
  /usr/include/bits/types/FILE.h /usr/include/bits/types/struct_FILE.h \
  /usr/include/bits/types/cookie_io_functions_t.h \
  /usr/include/bits/stdio_lim.h /usr/include/string.h \
- /usr/include/strings.h ../threads/thread.h ../threads/scheduler.h \
- ../threads/list.h ../machine/interrupt.h ../threads/list.h \
- ../machine/stats.h ../machine/timer.h ../threads/utility.h \
- /usr/include/unistd.h /usr/include/bits/posix_opt.h \
+ /usr/include/strings.h ../threads/scheduler.h ../threads/list.h \
+ ../threads/thread.h ../machine/stats.h ../machine/timer.h \
+ ../threads/utility.h /usr/include/unistd.h /usr/include/bits/posix_opt.h \
  /usr/include/bits/environments.h /usr/include/bits/confname.h \
  /usr/include/bits/getopt_posix.h /usr/include/bits/getopt_core.h \
  /usr/include/bits/unistd_ext.h /usr/include/linux/close_range.h \

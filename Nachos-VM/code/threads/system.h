@@ -53,7 +53,9 @@ extern Disk *swap;
 extern BitMap *swapSectors;
 extern Semaphore *swapDone;
 extern int SwapSize;
-extern char* SwapSpace;
+extern char* swapSpace;
+extern BitMap *MemRef;
+extern BitMap *TLBRef;
 #endif
 
 #ifdef FILESYS_NEEDED // FILESYS or FILESYS_STUB

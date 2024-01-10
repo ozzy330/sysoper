@@ -17,8 +17,10 @@
 
 #include "addrspace.h"
 #include "copyright.h"
+#include "machine.h"
 #include "noff.h"
 #include "system.h"
+#include "utility.h"
 
 //----------------------------------------------------------------------
 // SwapHeader
@@ -43,52 +45,33 @@ static void SwapHeader(NoffHeader *noffH) {
 void ReadPagesAtMachine(OpenFile *executable, int firstPage, int size,
                         int startFileAddr, TranslationEntry *pageTable,
                         int numPages) {
-  int page, file_offset;
-  char mem[SectorSize];
+  int page, sector, file_offset;
+  // char buff[SectorSize];
 
   for (int i = firstPage; i < firstPage + numPages; i++) {
     page = pageTable[i].physicalPage * PageSize;
+    sector = pageTable[i].swapSector * PageSize;
     file_offset = startFileAddr + (i * PageSize);
-    DEBUG('g', "PAG:%d VPAG:%d SEC:%d\n", pageTable[i].physicalPage,
-          pageTable[i].virtualPage, pageTable[i].swapSector);
-
     // Lee de disco
-    executable->ReadAt(mem, PageSize, file_offset);
+    // executable->ReadAt(buff, PageSize, file_offset);
 #ifndef VM
-    // executable->ReadAt(&(machine->mainMemory[page]), PageSize, file_offset);
     // Escribe en marco
-    for (int byte = 0; byte < PageSize; byte++) {
-      machine->mainMemory[page + byte] = mem[byte];
+    executable->ReadAt(&(machine->mainMemory[page]), PageSize, file_offset);
+    DEBUG('x', "En memoria %d [", pageTable[i].physicalPage);
+    for (int offset = 0; offset < SectorSize; offset++) {
+      DEBUG('x', "%x", machine->mainMemory[page + offset]);
     }
-    DEBUG('g', "Memory: \n");
-    for (int byte = 0; byte < PageSize; byte++) {
-      DEBUG('g', "%x", machine->mainMemory[page + byte]);
-    }
-    DEBUG('g', "\n");
+    DEBUG('x', "]\n");
 #else
-    // swapDone->P();
-    // Escribe en SWAP
-    // swap->WriteRequest(pageTable[i].swapSector, mem);
-    int sector = pageTable[i].swapSector * PageSize;
-    for (int byte = 0; byte < PageSize; byte++) {
-      SwapSpace[sector + byte] = mem[byte];
+    executable->ReadAt(&(swapSpace[sector]), SectorSize, file_offset);
+    DEBUG('x', "En swap %d [", pageTable[i].swapSector);
+    for (int offset = 0; offset < SectorSize; offset++) {
+      DEBUG('x', "%x", swapSpace[sector + offset]);
     }
-    DEBUG('g', "Swap: \n");
-    for (int byte = 0; byte < PageSize; byte++) {
-      DEBUG('g', "%x", SwapSpace[page + byte]);
-    }
-    DEBUG('g', "\n");
-
-    // char readed[SectorSize];
-    // swapDone->P();
-    // swap->ReadRequest(pageTable[i].swapSector, readed);
-    // DEBUG('g', "SWAP: \n");
-    // for (int byte = 0; byte < SectorSize; byte++) {
-    //   DEBUG('g', "%x", readed[byte]);
-    // }
-    // DEBUG('g', "\n");
+    DEBUG('x', "]\n");
 #endif
   }
+  stats->numDiskWrites += numPages;
 }
 
 //----------------------------------------------------------------------
@@ -133,15 +116,15 @@ AddrSpace::AddrSpace(OpenFile *executable) {
   int numUninitDataPages = divRoundUp(noffH.uninitData.size, PageSize);
   int numStackPages = divRoundUp(UserStackSize, PageSize);
   numPages = numCodePages + numDataPages + numUninitDataPages + numStackPages;
+#ifndef VM
   // check we're not trying to run anything too big -- at least until we have
   // virtual memory
   ASSERT(numPages <= NumPhysPages);
+#endif
   size = numPages * PageSize;
 
   DEBUG('a', "Initializing address space, num pages %d, size %d\n", numPages,
         size);
-
-  // INFO: asigna páginas logicas a fisicas 1 a 1, por ahora para cada proceso
 
   // first, set up the translation
   this->pageTable = new TranslationEntry[numPages];
@@ -151,21 +134,17 @@ AddrSpace::AddrSpace(OpenFile *executable) {
   //   MapitaBits->Mark(pagina);
   // }
 
-  char zero[SectorSize] = {0};
   for (i = 0; i < numPages; i++) {
     this->pageTable[i].virtualPage = i;
-#ifdef VM
-    this->pageTable[i].swapSector = swapSectors->SecureFind();
-    this->pageTable[i].physicalPage = 0;
-    // INFO: VM PT siempre inician invalidas y como se hace demand paging
-    // no se asigna nada a memoria
-    this->pageTable[i].valid = false;
-    // swapDone->P();
-    // swap->WriteRequest(this->pageTable[i].swapSector, zero);
-#else
+#ifndef VM
     this->pageTable[i].swapSector = 0;
     this->pageTable[i].physicalPage = MapitaBits->SecureFind();
     this->pageTable[i].valid = true;
+#else
+    this->pageTable[i].swapSector = swapSectors->SecureFind();
+    this->pageTable[i].physicalPage = 0;
+    // NOTE: VM siempre inicia como falsa
+    this->pageTable[i].valid = false;
 #endif
     // if the code segment was entirely on
     // a separate page, we could set its
@@ -181,61 +160,61 @@ AddrSpace::AddrSpace(OpenFile *executable) {
 
   // then, copy in the code and data segments into memory
   if (noffH.code.size > 0) {
-    // printf("Inicializando segmento de código\n");
-    // executable->ReadAt(&(machine->mainMemory[pageTable[0].physicalPage]),
-    //                    noffH.code.size, noffH.code.inFileAddr);
     ReadPagesAtMachine(executable, 0, noffH.code.size, noffH.code.inFileAddr,
                        this->pageTable, numCodePages);
-    // printf("Cargado segmento de código\n");
   }
   if (noffH.initData.size > 0) {
-    // printf("Inicializando segmento de datos\n");
-    // executable->ReadAt(&(machine->mainMemory[noffH.initData.virtualAddr]),
-    //                    noffH.initData.size, noffH.initData.inFileAddr);
-    // Las siguientes páginas despues del código son las de los datos
     ReadPagesAtMachine(executable, numCodePages, noffH.initData.size,
                        noffH.initData.inFileAddr, this->pageTable,
                        numDataPages);
-    // printf("Cargado segmento de datos\n");
   }
   for (i = 0; i < numPages; i++) {
-    DEBUG('o', "VPAG: %d, PAG: %d SEC: %d\n", pageTable[i].virtualPage,
+    DEBUG('g', "[NEW] VPAG: %d, PAG: %d SEC: %d\n", pageTable[i].virtualPage,
           pageTable[i].physicalPage, pageTable[i].swapSector);
+    // #ifdef VM
+    //     DEBUG('g', "Escrito a swap [%d]", i);
+    //     for (int offset = 0; offset < SectorSize; offset++) {
+    //       DEBUG('g', "%x", swapSpace[pageTable[i].swapSector + offset]);
+    //     }
+    //     DEBUG('g', "]\n");
+    // #else
+    //     DEBUG('g', "Escrito a memoria [%d]", i);
+    //     for (int offset = 0; offset < SectorSize; offset++) {
+    //       DEBUG('g', "%x", machine->mainMemory[pageTable[i].physicalPage +
+    //       offset]);
+    //     }
+    //     DEBUG('g', "]\n");
+    // #endif
   }
 }
 // Crea una copia de los segmentos compartidos y crea un nuevo stack
 AddrSpace::AddrSpace(const AddrSpace &source) : numPages(source.numPages) {
-
-  // this->numPages = source.numPages;
   // Calcula el tamño del stack
   int numStackPages = divRoundUp(UserStackSize, PageSize);
   this->numPages += numStackPages;
 
-  // check we're not trying to run anything too big -- at least until we have
-  // virtual memory
+// check we're not trying to run anything too big -- at least until we have
+// virtual memory
+#ifndef VM
   ASSERT(numPages <= NumPhysPages);
+#endif
   this->pageTable = new TranslationEntry[numPages];
 
-  memcpy(pageTable, source.pageTable, sizeof(TranslationEntry) * source.numPages);
+  memcpy(pageTable, source.pageTable,
+         sizeof(TranslationEntry) * source.numPages);
 
-  // Configura la traducción para el stack nuevo
-  char zero[SectorSize] = {0};
   int i;
   for (i = numPages - numStackPages; i < numPages; i++) {
     this->pageTable[i].virtualPage = i;
-#ifdef VM
-    // INFO: VM PT siempre inician invalidas y como se hace demand paging
-    // no se asigna nada a memoria
+#ifndef VM
+    this->pageTable[i].swapSector = 0;
+    this->pageTable[i].physicalPage = MapitaBits->SecureFind();
+    this->pageTable[i].valid = true;
+#else
     this->pageTable[i].swapSector = swapSectors->SecureFind();
     this->pageTable[i].physicalPage = 0;
+    // NOTE: VM siempre inicia como falsa
     this->pageTable[i].valid = false;
-    // Limpia el nuevo stack
-    // swapDone->P();
-    // swap->WriteRequest(this->pageTable[i].swapSector, zero);
-#else
-    this->pageTable[i].swapSector = 0;
-    this->pageTable[i].physicalPage = MapitaBits->Find();
-    this->pageTable[i].valid = true;
 #endif
     this->pageTable[i].readOnly = false;
     this->pageTable[i].use = false;
@@ -243,8 +222,22 @@ AddrSpace::AddrSpace(const AddrSpace &source) : numPages(source.numPages) {
   }
 
   for (i = 0; i < numPages; i++) {
-    DEBUG('o', "[CPY] VPAG: %d, PAG: %d SEC: %d\n", pageTable[i].virtualPage,
+    DEBUG('g', "[CPY] VPAG: %d, PAG: %d SEC: %d\n", pageTable[i].virtualPage,
           pageTable[i].physicalPage, pageTable[i].swapSector);
+    // #ifdef VM
+    //     DEBUG('g', "Escrito a swap [%d]", i);
+    //     for (int offset = 0; offset < SectorSize; offset++) {
+    //       DEBUG('g', "%x", swapSpace[pageTable[i].swapSector + offset]);
+    //     }
+    //     DEBUG('g', "]\n");
+    // #else
+    //     DEBUG('g', "Escrito a memoria [%d]", i);
+    //     for (int offset = 0; offset < SectorSize; offset++) {
+    //       DEBUG('g', "%x", machine->mainMemory[pageTable[i].physicalPage +
+    //       offset]);
+    //     }
+    //     DEBUG('g', "]\n");
+    // #endif
   }
 }
 
@@ -254,12 +247,17 @@ AddrSpace::AddrSpace(const AddrSpace &source) : numPages(source.numPages) {
 //----------------------------------------------------------------------
 
 AddrSpace::~AddrSpace() {
-
+  DEBUG('x', "Marcando memoria como libre\n");
   // Marca como libre el espacio de memoria que se ocupaba
   for (int page = 0; page < numPages; page++) {
     MapitaBits->SecureClear(this->pageTable[page].physicalPage);
+#ifdef VM
+    swapSectors->SecureClear(this->pageTable[page].swapSector);
+#endif
   }
-  delete pageTable;
+  DEBUG('y', "\t||| DELETING ADDRESS SPACE ... {%s}\n",
+        currentThread->getName());
+  delete this->pageTable;
 }
 
 //----------------------------------------------------------------------
@@ -300,7 +298,9 @@ void AddrSpace::InitRegisters() {
 //	For now, nothing!
 //----------------------------------------------------------------------
 
-void AddrSpace::SaveState() {}
+void AddrSpace::SaveState() {
+  DEBUG('y', "\t||| SAVING ... {%s}\n", currentThread->getName());
+}
 
 //----------------------------------------------------------------------
 // AddrSpace::RestoreState
@@ -312,9 +312,30 @@ void AddrSpace::SaveState() {}
 
 // WARN: VM problema con TLB
 void AddrSpace::RestoreState() {
+
+  DEBUG('o', " ___ESTADO MEMORIA___\n");
+  DEBUG('o', "[");
+  for (int i = 0; i < PageSize; i++) {
+    DEBUG('o', "%x", machine->mainMemory[PageSize + i]);
+  }
+  DEBUG('o', "]\n");
+
 #ifndef USE_TLB
   machine->pageTable = pageTable;
   machine->pageTableSize = numPages;
+#else
+
+  DEBUG('y', "\t||| RESTORE TLB -> NULL {%s}\n", currentThread->getName());
+  // machine->tlb = new TranslationEntry[TLBSize];
+  // machine->nextTLB = 0;
+
+  DEBUG('o', " ____ESTADO SWAP____\n");
+  DEBUG('o', "[");
+  for (int i = 0; i < PageSize; i++) {
+    DEBUG('o', "%x", swapSpace[PageSize + i]);
+  }
+  DEBUG('o', "]\n");
+
 #endif
 }
 
@@ -323,4 +344,55 @@ TranslationEntry *AddrSpace::Entry(unsigned virtpage) {
     return &this->pageTable[virtpage];
   }
   return NULL;
+}
+
+void AddrSpace::secondChanceMem(TranslationEntry *entry) {
+  int physPage = MapitaBits->SecureFind();
+  bool replaced = false;
+  int pageReplace = machine->nextMem;
+  if (physPage == -1) {
+    DEBUG('y', " ---> ESTADO MEMORIA\n");
+    DEBUG('y', "[");
+    for (int i = 0; i < PageSize; i++) {
+      DEBUG('y', "%x", machine->mainMemory[PageSize + i]);
+    }
+    DEBUG('y', "]\n");
+
+    while (!replaced) {
+      if (MemRef->SecureTest(pageReplace)) {
+        DEBUG('y', "\t>>> MEM [%d] TRUE -> FALSE \n", pageReplace);
+        MemRef->SecureClear(pageReplace);
+      } else {
+        // Marca la pagina como no en memoria
+        this->pageTable[pageReplace].valid = false;
+        MapitaBits->SecureClear(pageReplace);
+        replaced = true;
+        physPage = MapitaBits->SecureFind();
+      }
+      pageReplace++;
+      pageReplace = (pageReplace == NumPhysPages) ? 0 : pageReplace;
+      machine->nextMem = pageReplace;
+    }
+  }
+
+  // INFO: colocando datos nuevos a memoria
+  DEBUG('y', "\t>>> MEM [%d] FALSE -> TRUE \n", pageReplace);
+  DEBUG('y', "\t>>> MemPag [%d] <- {VPN [%d]}\n", physPage, entry->virtualPage);
+  entry->physicalPage = physPage;
+#ifdef VM
+  int page = entry->physicalPage * PageSize;
+  int sector = entry->swapSector * SectorSize;
+  for (int byte = 0; byte < PageSize; byte++) {
+    machine->mainMemory[page + byte] = swapSpace[sector + byte];
+  }
+#endif
+  MemRef->SecureMark(entry->physicalPage);
+  entry->valid = true;
+
+  DEBUG('y', " ---> ESTADO MEMORIA\n");
+  DEBUG('y', "[");
+  for (int i = 0; i < PageSize; i++) {
+    DEBUG('y', "%x", machine->mainMemory[PageSize + i]);
+  }
+  DEBUG('y', "]\n");
 }
