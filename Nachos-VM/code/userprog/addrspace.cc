@@ -137,12 +137,12 @@ AddrSpace::AddrSpace(OpenFile *executable) {
   for (i = 0; i < numPages; i++) {
     this->pageTable[i].virtualPage = i;
 #ifndef VM
-    this->pageTable[i].swapSector = 0;
+    this->pageTable[i].swapSector = -1;
     this->pageTable[i].physicalPage = MapitaBits->SecureFind();
     this->pageTable[i].valid = true;
 #else
     this->pageTable[i].swapSector = swapSectors->SecureFind();
-    this->pageTable[i].physicalPage = 0;
+    this->pageTable[i].physicalPage = -1;
     // NOTE: VM siempre inicia como falsa
     this->pageTable[i].valid = false;
 #endif
@@ -299,7 +299,7 @@ void AddrSpace::InitRegisters() {
 //----------------------------------------------------------------------
 
 void AddrSpace::SaveState() {
-  DEBUG('y', "\t||| SAVING ... {%s}\n", currentThread->getName());
+  DEBUG('1', "\t||| SAVING ... {%s}\n", currentThread->getName());
 }
 
 //----------------------------------------------------------------------
@@ -326,8 +326,8 @@ void AddrSpace::RestoreState() {
 #else
 
   DEBUG('y', "\t||| RESTORE TLB -> NULL {%s}\n", currentThread->getName());
-  // machine->tlb = new TranslationEntry[TLBSize];
-  // machine->nextTLB = 0;
+  machine->tlb = new TranslationEntry[TLBSize];
+  machine->nextTLB = 0;
 
   DEBUG('o', " ____ESTADO SWAP____\n");
   DEBUG('o', "[");
@@ -339,60 +339,29 @@ void AddrSpace::RestoreState() {
 #endif
 }
 
-TranslationEntry *AddrSpace::Entry(unsigned virtpage) {
+TranslationEntry *AddrSpace::EntryFromVirtPage(unsigned virtpage) {
   if (virtpage < numPages) {
     return &this->pageTable[virtpage];
   }
   return NULL;
 }
-
-void AddrSpace::secondChanceMem(TranslationEntry *entry) {
-  int physPage = MapitaBits->SecureFind();
-  bool replaced = false;
-  int pageReplace = machine->nextMem;
-  if (physPage == -1) {
-    DEBUG('y', " ---> ESTADO MEMORIA\n");
-    DEBUG('y', "[");
-    for (int i = 0; i < PageSize; i++) {
-      DEBUG('y', "%x", machine->mainMemory[PageSize + i]);
-    }
-    DEBUG('y', "]\n");
-
-    while (!replaced) {
-      if (MemRef->SecureTest(pageReplace)) {
-        DEBUG('y', "\t>>> MEM [%d] TRUE -> FALSE \n", pageReplace);
-        MemRef->SecureClear(pageReplace);
-      } else {
-        // Marca la pagina como no en memoria
-        this->pageTable[pageReplace].valid = false;
-        MapitaBits->SecureClear(pageReplace);
-        replaced = true;
-        physPage = MapitaBits->SecureFind();
-      }
-      pageReplace++;
-      pageReplace = (pageReplace == NumPhysPages) ? 0 : pageReplace;
-      machine->nextMem = pageReplace;
+TranslationEntry *AddrSpace::EntryFromPhysPage(unsigned physpage) {
+  for (int vp = 0; vp < numPages; vp++) {
+    TranslationEntry entry = this->pageTable[vp];
+    if (entry.physicalPage == physpage && entry.valid == true) {
+      DEBUG('y', "\t-- ENTRY VPN [%d] PPN [%d] SEC [%d]\n",
+            this->pageTable[vp].virtualPage, this->pageTable[vp].physicalPage,
+            this->pageTable[vp].swapSector);
+      return &this->pageTable[vp];
     }
   }
+  return NULL;
+}
 
-  // INFO: colocando datos nuevos a memoria
-  DEBUG('y', "\t>>> MEM [%d] FALSE -> TRUE \n", pageReplace);
-  DEBUG('y', "\t>>> MemPag [%d] <- {VPN [%d]}\n", physPage, entry->virtualPage);
-  entry->physicalPage = physPage;
-#ifdef VM
-  int page = entry->physicalPage * PageSize;
-  int sector = entry->swapSector * SectorSize;
-  for (int byte = 0; byte < PageSize; byte++) {
-    machine->mainMemory[page + byte] = swapSpace[sector + byte];
+void AddrSpace::printPT() {
+  for (int vp = 0; vp < numPages; vp++) {
+    TranslationEntry e = this->pageTable[vp];
+    printf("[%d] VALID: %d DIRTY: %d |VP %d|PP %d|SE %d|\n", vp, e.valid,
+           e.dirty, e.virtualPage, e.physicalPage, e.swapSector);
   }
-#endif
-  MemRef->SecureMark(entry->physicalPage);
-  entry->valid = true;
-
-  DEBUG('y', " ---> ESTADO MEMORIA\n");
-  DEBUG('y', "[");
-  for (int i = 0; i < PageSize; i++) {
-    DEBUG('y', "%x", machine->mainMemory[PageSize + i]);
-  }
-  DEBUG('y', "]\n");
 }

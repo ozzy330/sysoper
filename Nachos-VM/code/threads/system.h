@@ -31,9 +31,9 @@ extern Timer *timer;                // the hardware alarm clock
 
 #ifdef USER_PROGRAM
 #include "bitmap.h"
+#include "disk.h"
 #include "machine.h"
 #include "nachostablita.h"
-#include "disk.h"
 
 // user program memory and registers
 extern Machine *machine;
@@ -47,15 +47,22 @@ extern NachosOpenFilesTable *nachosTablita;
 // Mapa con los IDs de los hilos corriendo
 extern BitMap *runningThreads;
 
-
 // INFO: VM declaración de región de swap
 extern Disk *swap;
 extern BitMap *swapSectors;
 extern Semaphore *swapDone;
 extern int SwapSize;
-extern char* swapSpace;
+extern char *swapSpace;
 extern BitMap *MemRef;
 extern BitMap *TLBRef;
+
+// Implementación de algoritmo second chance para remplazo de paginas
+//
+// ref: bitmap con el bit de referencia de cada página
+// size: cantidad de páginas
+// next: ultima página sin referenciar
+extern int secondChance(BitMap *ref, int next, int cant);
+
 #endif
 
 #ifdef FILESYS_NEEDED // FILESYS or FILESYS_STUB

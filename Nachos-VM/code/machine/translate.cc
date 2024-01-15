@@ -29,6 +29,7 @@
 // All rights reserved.  See copyright.h for copyright notice and limitation
 // of liability and disclaimer of warranty provisions.
 
+#include "translate.h"
 #include "addrspace.h"
 #include "copyright.h"
 #include "disk.h"
@@ -37,7 +38,7 @@
 #include "utility.h"
 
 // extern const int PRUEBA = 503;
-extern const int PRUEBA = 100;
+extern const int PRUEBA = 68;
 extern int SALIR = 0;
 
 // Routines for converting Words and Short Words to and from the
@@ -209,7 +210,6 @@ ExceptionType Machine::Translate(int virtAddr, int *physAddr, int size,
   vpn = (unsigned)virtAddr / PageSize;
   offset = (unsigned)virtAddr % PageSize;
 
-  DEBUG('y', "== Hilo actual [%s]\n", currentThread->getName());
   if (tlb == NULL) { // => page table => vpn is index into table
     if (vpn >= pageTableSize) {
       DEBUG('a', "virtual page # %d too large for page table size %d!\n",
@@ -220,48 +220,112 @@ ExceptionType Machine::Translate(int virtAddr, int *physAddr, int size,
       // MapitaBits->Print();
       return PageFaultException;
     }
-    entry = currentThread->space->Entry(vpn);
+    entry = currentThread->space->EntryFromVirtPage(vpn);
     DEBUG('l', "Encontrada la pagina virtual %d\n", vpn);
 
   } else {
+#ifdef VM
     for (entry = NULL, i = 0; i < TLBSize; i++) {
       if (tlb[i].valid && (tlb[i].virtualPage == (int)vpn)) {
         entry = &tlb[i]; // FOUND!
-        DEBUG('y', "\t-- [%d] ON TLB %d\n", vpn, i);
-#ifdef VM
+        DEBUG('y', "\t-- VPN [%d] ON TLB [%d]\n", vpn, i);
         TLBRef->SecureMark(i);
-#endif
         break;
       }
     }
     if (entry == NULL) { // not found
-      DEBUG('y', "\t-- [%d] NOT on TLB %d \n", vpn, i);
+      DEBUG('y', "\t-- [%d] NOT on TLB\n", vpn);
       // NOTE: VM busca primero si está en memoria
-      entry = currentThread->space->Entry(vpn);
+      entry = currentThread->space->EntryFromVirtPage(vpn);
       if (entry == NULL) {
         DEBUG('y', "\t-- [%d] NOT on Machine\n", vpn);
         return BusErrorException;
       }
       if (entry->valid) {
-        DEBUG('y', "\t-- [%d] ON Memory %d \n", vpn, i);
-        this->secondChanceTLB(entry);
-        // return PageFaultException;
+        DEBUG('y', "\t-- [%d] ON Memory in [%d] \n", vpn, entry->physicalPage);
+        DEBUG('y', "\t-- Buscando remplazo en TLB\n");
+        // Busca una pagina libre o una a remplazar
+        int tlb_page = secondChance(TLBRef, nextTLB, TLBSize);
+        DEBUG('y', "\t-- TLB [VPN %d] -> [VPN %d]\n", tlb[tlb_page].virtualPage,
+              entry->virtualPage);
+        nextTLB = tlb_page;
+        tlb[tlb_page] = *entry;
+        // Marca como referenciada
+        MemRef->SecureMark(entry->physicalPage);
       } else {
-        stats->numPageFaults += 1;
+        // NOTE: VM si no está en memoria la toma del SWAP
         DEBUG('y', "\t-- [%d] NOT on Memory\n", vpn);
-        currentThread->space->secondChanceMem(entry);
-        this->secondChanceTLB(entry);
+        // Verifica si hay espacio en memoria si no, remplaza
+        int mem_page = MapitaBits->SecureFind();
+        if (mem_page == -1) {
+          DEBUG('y', "\t-- Buscando remplazo en Memoria\n");
+          mem_page = secondChance(MemRef, nextMem, NumPhysPages);
+          nextMem = mem_page;
+          MapitaBits->SecureMark(mem_page);
+        }
+        // Invalida pagina remplazada en Page Table y TLB
+        TranslationEntry *e = currentThread->space->EntryFromPhysPage(mem_page);
+        if (e != NULL) {
+          e->valid = false;
+          e->physicalPage = -1;
+
+          // La invalida en TLB si está
+          for (int pag_tlb = 0; pag_tlb < TLBSize; pag_tlb++) {
+            if (tlb[pag_tlb].virtualPage == entry->virtualPage) {
+              tlb[pag_tlb].valid = false;
+              tlb[pag_tlb].physicalPage = -1;
+              break;
+            }
+          }
+          // Guarda los cambios si hay
+          if (e->dirty == true) {
+            e->dirty = false;
+            DEBUG('c',
+                  "\t-----------------VPN %d NOT DIRTY -------------------\n",
+                  e->virtualPage);
+            DEBUG('1', "\t-- Guardando VPN [%d] | PPN [%d] -> SWAP [%d]\n",
+                  e->virtualPage, mem_page, e->swapSector);
+
+            DEBUG('c', "DISCARTED PAGE (%d) [", mem_page);
+            for (i = 0; i < PageSize; i++) {
+              DEBUG('c', "%x", this->mainMemory[mem_page * PageSize + i]);
+            }
+            DEBUG('c', "]\n");
+            DEBUG('c', "DISCARTED SWAP (%d)[", e->swapSector);
+            for (i = 0; i < PageSize; i++) {
+              DEBUG('c', "%x", swapSpace[e->swapSector * PageSize + i]);
+              swapSpace[e->swapSector * PageSize + i] =
+                  this->mainMemory[mem_page * PageSize + i];
+            }
+            DEBUG('c', "]\n");
+            DEBUG('c', "**** NOW SWAP (%d)[", e->swapSector);
+            for (i = 0; i < PageSize; i++) {
+              DEBUG('c', "%x", swapSpace[e->swapSector * PageSize + i]);
+            }
+            DEBUG('c', "]\n");
+          }
+        }
+        entry->physicalPage = mem_page;
+        entry->valid = true;
+        int page = entry->physicalPage * PageSize;
+        int sector = entry->swapSector * SectorSize;
+        // moviendo a memoria
+        for (int byte = 0; byte < SectorSize; byte++) {
+          machine->mainMemory[page + byte] = swapSpace[sector + byte];
+        }
+
+        DEBUG('y', "\t*** MEM[%d] <- VPN[%d]\n", entry->physicalPage,
+              entry->virtualPage);
         DEBUG('y', "\t-- [%d] from Swap\n", vpn);
-        // return PageFaultException;
       }
-      // DEBUG('y', "-- [%d] NOT on TLB %d \n", vpn, i);
-      // really, this is a TLB fault, the page may be
-      // in memory, but not in the TLB
-      // return PageFaultException;
     }
     if (entry == NULL) {
+      stats->numPageFaults += 1;
+      // really, this is a TLB fault, the page may be
+      // in memory, but not in the TLB
       return PageFaultException;
     }
+#endif
   }
 
   if (entry->readOnly && writing) { // trying to write to a read-only page
@@ -279,6 +343,7 @@ ExceptionType Machine::Translate(int virtAddr, int *physAddr, int size,
   entry->use = true; // set the use, dirty bits
   if (writing) {
     entry->dirty = true;
+    DEBUG('c', "\t-----------------VPN %d DIRTY-------------------\n", vpn);
   }
   *physAddr = pageFrame * PageSize + offset;
   ASSERT((*physAddr >= 0) && ((*physAddr + size) <= MemorySize));
@@ -286,17 +351,45 @@ ExceptionType Machine::Translate(int virtAddr, int *physAddr, int size,
   // DEBUG('a', "[%d:R/W] VPAG: %d {%d}, PAG: %d SEC: %d\n", SALIR,
   //       entry->virtualPage, offset, entry->physicalPage, entry->swapSector);
 
-  DEBUG('w', "[%d:%c] %d {%d} | PAG: %d SEC: %d\n", SALIR,
-        ((writing == true) ? 'W' : 'R'), entry->virtualPage, offset,
-        entry->physicalPage, entry->swapSector);
-
   // WARN:
-  DEBUG('w', "VPN %d OFFSET %d \n", vpn, offset);
-  DEBUG('w', "[");
+  int data = *(unsigned int *)&machine->mainMemory[*physAddr];
+  int value = WordToHost(data);
+  DEBUG('c', "  [%d:%c] PAG: %d [VPN %d] VADDR: 0x%x OFFSET %d {%8.8x} (%s)\n",
+        SALIR, ((writing == true) ? 'W' : 'R'), pageFrame, vpn, virtAddr,
+        offset, value, currentThread->getName());
+
+  TranslationEntry *e = currentThread->space->EntryFromVirtPage(13);
+
+  DEBUG('c', "Memory %d[", entry->physicalPage);
   for (i = 0; i < PageSize; i++) {
-    DEBUG('w', "%x", this->mainMemory[pageFrame * PageSize + i]);
+    DEBUG('c', "%x", this->mainMemory[pageFrame * PageSize + i]);
   }
-  DEBUG('w', "]\n");
+  DEBUG('c', "]\n");
+#ifdef VM
+  DEBUG('c', "SWAP %d[", entry->swapSector);
+  for (i = 0; i < PageSize; i++) {
+    DEBUG('c', "%x", swapSpace[entry->swapSector * PageSize + i]);
+  }
+  DEBUG('c', "]\n");
+
+#endif
+
+  ////--------------------------
+  if (e->valid == true) {
+    DEBUG('c', "Memory VPN 13 [");
+    for (i = 0; i < PageSize; i++) {
+      DEBUG('c', "%x", this->mainMemory[e->physicalPage * PageSize + i]);
+    }
+    DEBUG('c', "]\n");
+  }
+#ifdef VM
+  DEBUG('c', "SWAP VPN 13 [");
+  for (i = 0; i < PageSize; i++) {
+    DEBUG('c', "%x", swapSpace[e->swapSector * PageSize + i]);
+  }
+  DEBUG('c', "]\n");
+
+#endif
 
   SALIR++;
   if (SALIR == PRUEBA) {
@@ -305,76 +398,3 @@ ExceptionType Machine::Translate(int virtAddr, int *physAddr, int size,
   }
   return NoException;
 }
-void Machine::secondChanceTLB(TranslationEntry *entry) {
-  bool replaced = false;
-  int page = this->nextTLB;
-#ifdef VM
-  while (!replaced) {
-    if (TLBRef->SecureTest(page)) {
-      DEBUG('y', "\t*** TLB [%d] TRUE -> FALSE \n", page);
-      TLBRef->SecureClear(page);
-    } else {
-      this->tlb[page] = *entry;
-      replaced = true;
-      TLBRef->SecureMark(page);
-      DEBUG('y', "\t*** TLB [%d] FALSE -> TRUE \n", page);
-      DEBUG('y', "\t*** TLB [%d] <- VPN [%d]\n", page, entry->virtualPage);
-    }
-    page++;
-    DEBUG('l', "\tTLB siguinte pagina %d\n", page);
-    page = (page == TLBSize) ? 0 : page;
-    nextTLB = page;
-    // DEBUG('s', "\tTLB %d -> %d\n", nextTLB, page);
-  }
-#endif
-}
-
-// bool Machine::checkOnMem(int vpn, TranslationEntry *entry) {
-//   // NOTE: VM busca en la tabla de paginas del proceso actual si
-//   // la VPN está en memoria
-//   entry = currentThread->space->Entry(vpn);
-//   if (entry != NULL && entry->valid) {
-//     entry->reference = true;
-//     DEBUG('l', "Found VPN %d on memory\n", vpn);
-//   } else {
-//     DEBUG('l', "Not founded VPN %d on memory\n", vpn);
-//     return false;
-//   }
-//   return true;
-// }
-// bool Machine::checkOnSwap(int vpn, TranslationEntry *entry) {
-//   // NOTE: VM busca en Swap Space la VPN
-//   entry = currentThread->space->Entry(vpn);
-//   if (entry == NULL) {
-//     DEBUG('l', "VPN %d is NOT on Swap\n", vpn);
-//     return false;
-//   }
-//
-//   // NOTE: VM agrega el marco encontrado en memoria
-//   entry->physicalPage = currentThread->space->secondChanceMem();
-//   DEBUG('s', "\tMemPag -> %d\n", entry->virtualPage);
-//   int page = entry->physicalPage * PageSize;
-//   int sector = entry->swapSector * SectorSize;
-//   for (int offset = 0; offset < SectorSize; offset++) {
-// #ifdef VM
-//     this->mainMemory[page + offset] = swapSpace[sector + offset];
-// #endif
-//   }
-//   DEBUG('w', "%d[", vpn);
-//   for (int i = 0; i < PageSize; i++) {
-//     DEBUG('w', "%x", this->mainMemory[page + i]);
-//   }
-//   DEBUG('w', "]\n");
-// #ifdef VM
-//   DEBUG('w', "%d{", vpn);
-//   for (int i = 0; i < PageSize; i++) {
-//     DEBUG('w', "%x", swapSpace[sector + i]);
-//   }
-//   DEBUG('w', "}\n");
-// #endif
-//   entry->valid = true;
-//   entry->reference = true;
-//   DEBUG('l', "Found VPN %d on Swap VAL %d, REF %d\n", vpn, entry->valid,
-//         entry->reference);
-//   return entry;
-// }

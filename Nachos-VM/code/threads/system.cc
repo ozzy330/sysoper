@@ -63,6 +63,9 @@ char *swapSpace;
 
 // INFO: VM mantiene registro de paginas referenciadas en TLB
 BitMap *TLBRef;
+
+int secondChance(BitMap *ref, int next, int cant);
+
 #endif
 
 #ifdef NETWORK
@@ -124,7 +127,7 @@ void Initialize(int argc, char **argv) {
   nachosTablita = new NachosOpenFilesTable();
   // INFO: Inicializacion de control para hilos abiertos
   runningThreads = new BitMap(MaxNumProcesses);
-  MemRef= new BitMap(NumPhysPages);
+  MemRef = new BitMap(NumPhysPages);
 #endif
 
 #ifdef VM
@@ -283,3 +286,23 @@ void Cleanup() {
 
   Exit(0);
 }
+
+#ifdef USER_PROGRAM
+int secondChance(BitMap *ref, int next, int cant) {
+  int to_replace = next;
+  bool replaced = false;
+  while (!replaced) {
+    if (ref->SecureTest(to_replace)) {
+      DEBUG('y', "\t-- PAG [%d/%d] -> REF: FALSE \n", to_replace, cant - 1);
+      ref->SecureClear(to_replace);
+      to_replace = (to_replace == cant - 1) ? 0 : ++to_replace;
+    } else {
+      ref->SecureMark(to_replace);
+      replaced = true;
+      DEBUG('y', "\t-- PAG [%d/%d] -> REF: TRUE \n", to_replace, cant - 1);
+    }
+  }
+  DEBUG('y', "\t-- REMPLAZADA PAG [%d]\n", to_replace, cant - 1);
+  return to_replace;
+}
+#endif

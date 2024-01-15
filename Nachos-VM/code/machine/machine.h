@@ -35,13 +35,13 @@ const int PageSize = SectorSize; // set the page size equal to
 
 const int MaxNumProcesses = 128;
 #ifdef VM
-const int NumPhysPages = 4;
+const int NumPhysPages = 2;
 #else
 const int NumPhysPages = 32;
 #endif
 const int MemorySize = NumPhysPages * PageSize;
 // INFO: VM TLB size = 4
-const int TLBSize = 4; // if there is a TLB, make it small
+const int TLBSize = 2; // if there is a TLB, make it small
 
 enum ExceptionType {
   NoException,           // Everything ok!

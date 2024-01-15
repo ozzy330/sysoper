@@ -42,10 +42,9 @@ public:
   void RestoreState();
 
   // Devuelve la pagina con sus meta datos
-  TranslationEntry *Entry(unsigned virtpage);
-
-  // Implementa un algoritmo de remplazo de paginas
-  void secondChanceMem(TranslationEntry *vpn);
+  TranslationEntry *EntryFromVirtPage(unsigned virtpage);
+  TranslationEntry *EntryFromPhysPage(unsigned physpage);
+  void printPT();
 
 private:
   // Assume linear page table translation for now!

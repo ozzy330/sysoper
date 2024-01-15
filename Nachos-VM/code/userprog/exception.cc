@@ -168,7 +168,7 @@ void NachOS_Write() { // System call 6
 
   int vpn = (unsigned)addr / PageSize;
   int offset = (unsigned)addr % PageSize;
-  TranslationEntry *entry = currentThread->space->Entry(vpn);
+  TranslationEntry *entry = currentThread->space->EntryFromVirtPage(vpn);
   DEBUG('q', "Escrito a memoria [%d - %d] %s\n", vpn, offset, buffer);
   for (int offs = 0; offs < SectorSize; offs++) {
     DEBUG('q', "%x", machine->mainMemory[(entry->physicalPage * PageSize + offset) + offs]);
