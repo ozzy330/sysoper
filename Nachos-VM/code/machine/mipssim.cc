@@ -35,7 +35,6 @@ void Machine::Run() {
            stats->totalTicks);
   interrupt->setStatus(UserMode);
   // NOTE: 1 Inicia la simulación
-  // WARN: que asco de loop
   while (1) {
     OneInstruction(instr);
     interrupt->OneTick();
@@ -95,7 +94,7 @@ void Machine::OneInstruction(Instruction *instr) {
   int nextLoadValue = 0;
 
   // Fetch instruction
-  if (!machine->ReadMem(registers[PCReg], 4, &raw)) {
+  if (!machine->ReadMem(registers[PCReg], 4, &raw, "INSTR")) {
     return; // exception occurred
   }
   instr->value = raw;
@@ -231,7 +230,7 @@ void Machine::OneInstruction(Instruction *instr) {
   case OP_LB:
   case OP_LBU:
     tmp = registers[(int)instr->rs] + instr->extra;
-    if (!machine->ReadMem(tmp, 1, &value))
+    if (!machine->ReadMem(tmp, 1, &value, "LBU"))
       return;
 
     if ((value & 0x80) && (instr->opCode == OP_LB))
@@ -249,7 +248,7 @@ void Machine::OneInstruction(Instruction *instr) {
       RaiseException(AddressErrorException, tmp);
       return;
     }
-    if (!machine->ReadMem(tmp, 2, &value))
+    if (!machine->ReadMem(tmp, 2, &value, "LHU"))
       return;
 
     if ((value & 0x8000) && (instr->opCode == OP_LH))
@@ -271,7 +270,7 @@ void Machine::OneInstruction(Instruction *instr) {
       RaiseException(AddressErrorException, tmp);
       return;
     }
-    if (!machine->ReadMem(tmp, 4, &value))
+    if (!machine->ReadMem(tmp, 4, &value, "LW"))
       return;
     nextLoadReg = instr->rt;
     nextLoadValue = value;
@@ -285,7 +284,7 @@ void Machine::OneInstruction(Instruction *instr) {
     // fail (I think) if the other cases are ever exercised.
     ASSERT((tmp & 0x3) == 0);
 
-    if (!machine->ReadMem(tmp, 4, &value))
+    if (!machine->ReadMem(tmp, 4, &value, "LWL"))
       return;
     if (registers[LoadReg] == instr->rt)
       nextLoadValue = registers[LoadValueReg];
@@ -316,7 +315,7 @@ void Machine::OneInstruction(Instruction *instr) {
     // fail (I think) if the other cases are ever exercised.
     ASSERT((tmp & 0x3) == 0);
 
-    if (!machine->ReadMem(tmp, 4, &value))
+    if (!machine->ReadMem(tmp, 4, &value, "LWR"))
       return;
     if (registers[LoadReg] == instr->rt)
       nextLoadValue = registers[LoadValueReg];
@@ -382,13 +381,13 @@ void Machine::OneInstruction(Instruction *instr) {
 
   case OP_SB:
     if (!machine->WriteMem((unsigned)(registers[(int)instr->rs] + instr->extra),
-                           1, registers[(int)instr->rt]))
+                           1, registers[(int)instr->rt], "SB"))
       return;
     break;
 
   case OP_SH:
     if (!machine->WriteMem((unsigned)(registers[(int)instr->rs] + instr->extra),
-                           2, registers[(int)instr->rt]))
+                           2, registers[(int)instr->rt], "SH"))
       return;
     break;
 
@@ -471,7 +470,7 @@ void Machine::OneInstruction(Instruction *instr) {
 
   case OP_SW:
     if (!machine->WriteMem((unsigned)(registers[(int)instr->rs] + instr->extra),
-                           4, registers[(int)instr->rt]))
+                           4, registers[(int)instr->rt], "SUBU"))
       return;
     break;
 
@@ -482,7 +481,7 @@ void Machine::OneInstruction(Instruction *instr) {
     // fail (I think) if the other cases are ever exercised.
     ASSERT((tmp & 0x3) == 0);
 
-    if (!machine->ReadMem((tmp & ~0x3), 4, &value))
+    if (!machine->ReadMem((tmp & ~0x3), 4, &value, "SWL"))
       return;
     switch (tmp & 0x3) {
     case 0:
@@ -500,7 +499,7 @@ void Machine::OneInstruction(Instruction *instr) {
       value = (value & 0xffffff00) | ((registers[(int)instr->rt] >> 24) & 0xff);
       break;
     }
-    if (!machine->WriteMem((tmp & ~0x3), 4, value))
+    if (!machine->WriteMem((tmp & ~0x3), 4, value, "SWL"))
       return;
     break;
 
@@ -511,7 +510,7 @@ void Machine::OneInstruction(Instruction *instr) {
     // fail (I think) if the other cases are ever exercised.
     ASSERT((tmp & 0x3) == 0);
 
-    if (!machine->ReadMem((tmp & ~0x3), 4, &value))
+    if (!machine->ReadMem((tmp & ~0x3), 4, &value, "SWR"))
       return;
     switch (tmp & 0x3) {
     case 0:
@@ -527,7 +526,7 @@ void Machine::OneInstruction(Instruction *instr) {
       value = registers[(int)instr->rt];
       break;
     }
-    if (!machine->WriteMem((tmp & ~0x3), 4, value))
+    if (!machine->WriteMem((tmp & ~0x3), 4, value, "SWR"))
       return;
     break;
 

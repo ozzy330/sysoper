@@ -1,241 +1,64 @@
-g++ -I../filesys -I../bin -I../vm -I../userprog -I../threads -I../machine -DUSER_PROGRAM  -DFILESYS_NEEDED -DFILESYS_STUB -DVM -DUSE_TLB -DHOST_x86_64 -DHOST_LINUX -DCHANGED -M ../threads/main.cc ../threads/scheduler.cc ../threads/synch.cc ../threads/system.cc ../threads/thread.cc ../threads/utility.cc ../threads/threadtest.cc ../threads/diningph.cc ../machine/interrupt.cc ../machine/sysdep.cc ../machine/stats.cc ../machine/timer.cc ../threads/preemptive.cc ../userprog/addrspace.cc ../userprog/bitmap.cc ../userprog/exception.cc ../userprog/progtest.cc ../machine/console.cc ../machine/machine.cc ../machine/mipssim.cc ../machine/translate.cc ../userprog/nachostablita.cc ../machine/disk.cc > makedep
-echo '/^# DO NOT DELETE THIS LINE/+2,$d' >eddep
-echo '$r makedep' >>eddep
-echo 'wq' >>eddep
-ed - Makefile < eddep
-rm eddep makedep 
-echo '# DEPENDENCIES MUST END AT END OF FILE' >> Makefile
-echo '# IF YOU PUT STUFF HERE IT WILL GO AWAY' >> Makefile
-echo '# see make depend above' >> Makefile
-g++ -g -Wall -Wshadow -I../filesys -I../bin -I../vm -I../userprog -I../threads -I../machine -DUSER_PROGRAM  -DFILESYS_NEEDED -DFILESYS_STUB -DVM -DUSE_TLB -DHOST_x86_64 -DHOST_LINUX -DCHANGED -c ../machine/translate.cc
-g++ main.o scheduler.o synch.o system.o thread.o utility.o threadtest.o interrupt.o stats.o sysdep.o timer.o preemptive.o diningph.o addrspace.o bitmap.o exception.o progtest.o console.o machine.o mipssim.o translate.o nachostablita.o disk.o switch.o  -o nachos
+farroyo@fedora:~/nachos64/code/vm$ ./nachos -d a -x ../test/halt.lab 
+Initializing stack register to 1392
+Reading VA 0x0, size 4
+	Translate 0x0, read: *** no valid TLB entry found for this virtual page!
+Reading VA 0x0, size 4
+	Translate 0x0, read: phys addr = 0x0
+	value read = 0c000044
+Reading VA 0x4, size 4
+	Translate 0x4, read: phys addr = 0x4
+	value read = 00000000
+Reading VA 0x110, size 4
+	Translate 0x110, read: *** no valid TLB entry found for this virtual page!
+Reading VA 0x110, size 4
+	Translate 0x110, read: phys addr = 0x90
+	value read = 27bdffe8
+Reading VA 0x114, size 4
+	Translate 0x114, read: phys addr = 0x94
+	value read = afbf0014
+Writing VA 0x56c, size 4, value 0x8
+	Translate 0x56c, write: *** no valid TLB entry found for this virtual page!
+Reading VA 0x114, size 4
+	Translate 0x114, read: phys addr = 0x94
+	value read = afbf0014
+Writing VA 0x56c, size 4, value 0x8
+	Translate 0x56c, write: phys addr = 0x16c
+Reading VA 0x118, size 4
+	Translate 0x118, read: phys addr = 0x98
+	value read = afbe0010
+Writing VA 0x568, size 4, value 0x0
+	Translate 0x568, write: phys addr = 0x168
+Reading VA 0x11c, size 4
+	Translate 0x11c, read: phys addr = 0x9c
+	value read = 0c000040
+Reading VA 0x120, size 4
+	Translate 0x120, read: phys addr = 0xa0
+	value read = 03a0f021
+Reading VA 0x100, size 4
+	Translate 0x100, read: phys addr = 0x80
+	value read = 03e00008
+Reading VA 0x104, size 4
+	Translate 0x104, read: phys addr = 0x84
+	value read = 00000000
+Reading VA 0x124, size 4
+	Translate 0x124, read: phys addr = 0xa4
+	value read = 0c000004
+Reading VA 0x128, size 4
+	Translate 0x128, read: phys addr = 0xa8
+	value read = 00000000
+Reading VA 0x10, size 4
+	Translate 0x10, read: phys addr = 0x10
+	value read = 24020000
+Reading VA 0x14, size 4
+	Translate 0x14, read: phys addr = 0x14
+	value read = 0000000c
+Shutdown, initiated by user program.
+Machine halting!
 
+Ticks: total 265, idle 0, system 250, user 15
+Disk I/O: reads 0, writes 3
+Console I/O: reads 0, writes 0
+Paging: faults 3
+Network I/O: packets received 0, sent 0
 
-Iniciando Shell en NachOS:
-
-  [0:R] [VPN 0] VADDR: 0x0 OFFSET 0 {0c000034} (main)
-Memory [3400c0000800c21200000224c00080ffffffe03000010224c00080ffffffe03000020224c00080ffffffe03000030224c00080ffffffe03000040224c00080ffffffe03000050224c00080ffffffe03000060224c00080ffffffe030000]
-  [1:R] [VPN 0] VADDR: 0x4 OFFSET 4 {00000000} (main)
-Memory [3400c0000800c21200000224c00080ffffffe03000010224c00080ffffffe03000020224c00080ffffffe03000030224c00080ffffffe03000040224c00080ffffffe03000050224c00080ffffffe03000060224c00080ffffffe030000]
-  [2:R] [VPN 1] VADDR: 0xd0 OFFSET 80 {27bdffe8} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [3:R] [VPN 1] VADDR: 0xd4 OFFSET 84 {afbf0014} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [4:W] [VPN 13] VADDR: 0x6ec OFFSET 108 {00000000} (main)
-Memory [00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000]
-  [5:R] [VPN 1] VADDR: 0xd8 OFFSET 88 {afbe0010} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [6:W] [VPN 13] VADDR: 0x6e8 OFFSET 104 {00000000} (main)
-Memory [00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000]
-  [7:R] [VPN 1] VADDR: 0xdc OFFSET 92 {03a0f021} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [8:R] [VPN 1] VADDR: 0xe0 OFFSET 96 {afc40018} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [9:W] [VPN 13] VADDR: 0x6f0 OFFSET 112 {00000000} (main)
-Memory [00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000]
-  [10:R] [VPN 1] VADDR: 0xe4 OFFSET 100 {0c000030} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [11:R] [VPN 1] VADDR: 0xe8 OFFSET 104 {afc5001c} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [12:W] [VPN 13] VADDR: 0x6f4 OFFSET 116 {00000000} (main)
-Memory [00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000]
-  [13:R] [VPN 1] VADDR: 0xc0 OFFSET 64 {03e00008} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [14:R] [VPN 1] VADDR: 0xc4 OFFSET 68 {00000000} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [15:R] [VPN 1] VADDR: 0xec OFFSET 108 {3c040000} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [16:R] [VPN 1] VADDR: 0xf0 OFFSET 112 {2484012c} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [17:R] [VPN 1] VADDR: 0xf4 OFFSET 116 {0c000028} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [18:R] [VPN 1] VADDR: 0xf8 OFFSET 120 {00000000} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [19:R] [VPN 1] VADDR: 0xa0 OFFSET 32 {24020009} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [20:R] [VPN 1] VADDR: 0xa4 OFFSET 36 {0000000c} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [21:R] [VPN 1] VADDR: 0xa8 OFFSET 40 {03e00008} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [22:R] [VPN 1] VADDR: 0xac OFFSET 44 {00000000} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [23:R] [VPN 1] VADDR: 0xfc OFFSET 124 {0c00004b} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [24:R] [VPN 2] VADDR: 0x100 OFFSET 0 {24040001} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [25:R] [VPN 2] VADDR: 0x12c OFFSET 44 {27bdffe8} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [26:R] [VPN 2] VADDR: 0x130 OFFSET 48 {afbf0014} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [27:W] [VPN 13] VADDR: 0x6d4 OFFSET 84 {00000000} (main)
-Memory [00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000]
-  [28:R] [VPN 2] VADDR: 0x134 OFFSET 52 {afbe0010} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [29:W] [VPN 13] VADDR: 0x6d0 OFFSET 80 {00000000} (main)
-Memory [00000000000000000000000000000000000000000000000000000000000000000000000000000000000041000000000000000000000080000000000000000000]
-  [30:R] [VPN 2] VADDR: 0x138 OFFSET 56 {03a0f021} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [31:R] [VPN 2] VADDR: 0x13c OFFSET 60 {afc40018} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [32:W] [VPN 13] VADDR: 0x6d8 OFFSET 88 {00000000} (main)
-Memory [00000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffd860041000000000000000000000080000000000000000000]
-  [33:R] [VPN 2] VADDR: 0x140 OFFSET 64 {8fc20018} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [34:R] [VPN 13] VADDR: 0x6d8 OFFSET 88 {00000001} (main)
-Memory [00000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffd860041001000000000000000000080000000000000000000]
-  [35:R] [VPN 2] VADDR: 0x144 OFFSET 68 {24030001} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [36:R] [VPN 2] VADDR: 0x148 OFFSET 72 {14430017} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [37:R] [VPN 2] VADDR: 0x14c OFFSET 76 {00000000} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [38:R] [VPN 2] VADDR: 0x150 OFFSET 80 {afc00018} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [39:W] [VPN 13] VADDR: 0x6d8 OFFSET 88 {00000001} (main)
-Memory [00000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffd860041001000000000000000000080000000000000000000]
-  [40:R] [VPN 2] VADDR: 0x154 OFFSET 84 {8fc20018} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [41:R] [VPN 13] VADDR: 0x6d8 OFFSET 88 {00000000} (main)
-Memory [00000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffd860041000000000000000000000080000000000000000000]
-  [42:R] [VPN 2] VADDR: 0x158 OFFSET 88 {00000000} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [43:R] [VPN 2] VADDR: 0x15c OFFSET 92 {28430005} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [44:R] [VPN 2] VADDR: 0x160 OFFSET 96 {14600003} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [45:R] [VPN 2] VADDR: 0x164 OFFSET 100 {00000000} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [46:R] [VPN 2] VADDR: 0x170 OFFSET 112 {3c040000} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [47:R] [VPN 2] VADDR: 0x174 OFFSET 116 {24840228} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [48:R] [VPN 2] VADDR: 0x178 OFFSET 120 {24050007} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [49:R] [VPN 2] VADDR: 0x17c OFFSET 124 {0c000020} (main)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [50:R] [VPN 3] VADDR: 0x180 OFFSET 0 {24060001} (main)
-Memory [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
-  [51:R] [VPN 1] VADDR: 0x80 OFFSET 0 {24020007} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [52:R] [VPN 1] VADDR: 0x84 OFFSET 4 {0000000c} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [53:R] [VPN 4] VADDR: 0x228 OFFSET 40 {616c6f48} (main)
-Memory [705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd274d61696e2020a0486f6c612031a0486f6c612032a046696e206465a00000000000000000000000000000000000000000000000000000000000000000]
-  [54:R] [VPN 4] VADDR: 0x229 OFFSET 41 {20616c6f} (main)
-Memory [705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd274d61696e2020a0486f6c612031a0486f6c612032a046696e206465a00000000000000000000000000000000000000000000000000000000000000000]
-  [55:R] [VPN 4] VADDR: 0x22a OFFSET 42 {3120616c} (main)
-Memory [705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd274d61696e2020a0486f6c612031a0486f6c612032a046696e206465a00000000000000000000000000000000000000000000000000000000000000000]
-  [56:R] [VPN 4] VADDR: 0x22b OFFSET 43 {0a312061} (main)
-Memory [705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd274d61696e2020a0486f6c612031a0486f6c612032a046696e206465a00000000000000000000000000000000000000000000000000000000000000000]
-  [57:R] [VPN 4] VADDR: 0x22c OFFSET 44 {000a3120} (main)
-Memory [705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd274d61696e2020a0486f6c612031a0486f6c612032a046696e206465a00000000000000000000000000000000000000000000000000000000000000000]
-  [58:R] [VPN 4] VADDR: 0x22d OFFSET 45 {48000a31} (main)
-Memory [705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd274d61696e2020a0486f6c612031a0486f6c612032a046696e206465a00000000000000000000000000000000000000000000000000000000000000000]
-  [59:R] [VPN 4] VADDR: 0x22e OFFSET 46 {6f48000a} (main)
-Memory [705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd274d61696e2020a0486f6c612031a0486f6c612032a046696e206465a00000000000000000000000000000000000000000000000000000000000000000]
-Hola 1
-  [60:R] [VPN 1] VADDR: 0x88 OFFSET 8 {03e00008} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [61:R] [VPN 1] VADDR: 0x8c OFFSET 12 {00000000} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [62:R] [VPN 3] VADDR: 0x184 OFFSET 4 {0c00002c} (main)
-Memory [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
-  [63:R] [VPN 3] VADDR: 0x188 OFFSET 8 {00000000} (main)
-Memory [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
-  [64:R] [VPN 1] VADDR: 0xb0 OFFSET 48 {2402000a} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [65:R] [VPN 1] VADDR: 0xb4 OFFSET 52 {0000000c} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [66:R] [VPN 2] VADDR: 0x12c OFFSET 44 {27bdffe8} (child to execute Fork code)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [67:R] [VPN 2] VADDR: 0x130 OFFSET 48 {afbf0014} (child to execute Fork code)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [68:W] [VPN 21] VADDR: 0xaec OFFSET 108 {00000000} (child to execute Fork code)
-Memory [00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000]
-  [69:R] [VPN 2] VADDR: 0x134 OFFSET 52 {afbe0010} (child to execute Fork code)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [70:W] [VPN 21] VADDR: 0xae8 OFFSET 104 {00000000} (child to execute Fork code)
-Memory [00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000]
-  [71:R] [VPN 2] VADDR: 0x138 OFFSET 56 {03a0f021} (child to execute Fork code)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [72:R] [VPN 2] VADDR: 0x13c OFFSET 60 {afc40018} (child to execute Fork code)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [73:W] [VPN 21] VADDR: 0xaf0 OFFSET 112 {00000000} (child to execute Fork code)
-Memory [00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000]
-  [74:R] [VPN 2] VADDR: 0x140 OFFSET 64 {8fc20018} (child to execute Fork code)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [75:R] [VPN 21] VADDR: 0xaf0 OFFSET 112 {00000000} (child to execute Fork code)
-Memory [00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000]
-  [76:R] [VPN 2] VADDR: 0x144 OFFSET 68 {24030001} (child to execute Fork code)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [77:R] [VPN 2] VADDR: 0x148 OFFSET 72 {14430017} (child to execute Fork code)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [78:R] [VPN 2] VADDR: 0x14c OFFSET 76 {00000000} (child to execute Fork code)
-Memory [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
-  [79:R] [VPN 3] VADDR: 0x1a8 OFFSET 40 {afc00018} (child to execute Fork code)
-Memory [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
-  [80:W] [VPN 21] VADDR: 0xaf0 OFFSET 112 {00000000} (child to execute Fork code)
-Memory [00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000]
-  [81:R] [VPN 3] VADDR: 0x1ac OFFSET 44 {8fc20018} (child to execute Fork code)
-Memory [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
-  [82:R] [VPN 21] VADDR: 0xaf0 OFFSET 112 {00000000} (child to execute Fork code)
-Memory [00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040000000000000000000]
-  [83:R] [VPN 3] VADDR: 0x1b0 OFFSET 48 {00000000} (child to execute Fork code)
-Memory [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
-  [84:R] [VPN 3] VADDR: 0x1b4 OFFSET 52 {28430005} (child to execute Fork code)
-Memory [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
-  [85:R] [VPN 3] VADDR: 0x1b8 OFFSET 56 {14600003} (child to execute Fork code)
-Memory [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
-  [86:R] [VPN 3] VADDR: 0x1bc OFFSET 60 {00000000} (child to execute Fork code)
-Memory [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
-  [87:R] [VPN 3] VADDR: 0x1c8 OFFSET 72 {3c040000} (child to execute Fork code)
-Memory [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
-  [88:R] [VPN 3] VADDR: 0x1cc OFFSET 76 {24840230} (child to execute Fork code)
-Memory [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
-  [89:R] [VPN 3] VADDR: 0x1d0 OFFSET 80 {24050007} (child to execute Fork code)
-Memory [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
-  [90:R] [VPN 3] VADDR: 0x1d4 OFFSET 84 {0c000020} (child to execute Fork code)
-Memory [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
-  [91:R] [VPN 3] VADDR: 0x1d8 OFFSET 88 {24060001} (child to execute Fork code)
-Memory [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
-  [92:R] [VPN 1] VADDR: 0x80 OFFSET 0 {24020007} (child to execute Fork code)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [93:R] [VPN 1] VADDR: 0x84 OFFSET 4 {0000000c} (child to execute Fork code)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [94:R] [VPN 4] VADDR: 0x230 OFFSET 48 {616c6f48} (child to execute Fork code)
-Memory [705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd274d61696e2020a0486f6c612031a0486f6c612032a046696e206465a00000000000000000000000000000000000000000000000000000000000000000]
-  [95:R] [VPN 4] VADDR: 0x231 OFFSET 49 {20616c6f} (child to execute Fork code)
-Memory [705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd274d61696e2020a0486f6c612031a0486f6c612032a046696e206465a00000000000000000000000000000000000000000000000000000000000000000]
-  [96:R] [VPN 4] VADDR: 0x232 OFFSET 50 {3220616c} (child to execute Fork code)
-Memory [705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd274d61696e2020a0486f6c612031a0486f6c612032a046696e206465a00000000000000000000000000000000000000000000000000000000000000000]
-  [97:R] [VPN 4] VADDR: 0x233 OFFSET 51 {0a322061} (child to execute Fork code)
-Memory [705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd274d61696e2020a0486f6c612031a0486f6c612032a046696e206465a00000000000000000000000000000000000000000000000000000000000000000]
-  [98:R] [VPN 4] VADDR: 0x234 OFFSET 52 {000a3220} (child to execute Fork code)
-Memory [705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd274d61696e2020a0486f6c612031a0486f6c612032a046696e206465a00000000000000000000000000000000000000000000000000000000000000000]
-  [99:R] [VPN 4] VADDR: 0x235 OFFSET 53 {46000a32} (child to execute Fork code)
-Memory [705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd274d61696e2020a0486f6c612031a0486f6c612032a046696e206465a00000000000000000000000000000000000000000000000000000000000000000]
-  [100:R] [VPN 4] VADDR: 0x236 OFFSET 54 {6946000a} (child to execute Fork code)
-Memory [705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd274d61696e2020a0486f6c612031a0486f6c612032a046696e206465a00000000000000000000000000000000000000000000000000000000000000000]
-Hola 2
-  [101:R] [VPN 1] VADDR: 0x88 OFFSET 8 {03e00008} (child to execute Fork code)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [102:R] [VPN 1] VADDR: 0x8c OFFSET 12 {00000000} (child to execute Fork code)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [103:R] [VPN 3] VADDR: 0x1dc OFFSET 92 {0c00002c} (child to execute Fork code)
-Memory [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
-  [104:R] [VPN 3] VADDR: 0x1e0 OFFSET 96 {00000000} (child to execute Fork code)
-Memory [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
-  [105:R] [VPN 1] VADDR: 0xb0 OFFSET 48 {2402000a} (child to execute Fork code)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [106:R] [VPN 1] VADDR: 0xb4 OFFSET 52 {0000000c} (child to execute Fork code)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [107:R] [VPN 1] VADDR: 0xb8 OFFSET 56 {03e00008} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [108:R] [VPN 1] VADDR: 0xbc OFFSET 60 {00000000} (main)
-Memory [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
-  [109:R] [VPN 3] VADDR: 0x18c OFFSET 12 {8fc20018} (main)
-Memory [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
-  [110:R] [VPN 13] VADDR: 0x6d8 OFFSET 88 {24060001} (main)
-Memory [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
-  [111:R] [VPN 3] VADDR: 0x190 OFFSET 16 {00000000} (main)
-Memory [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
+Cleaning up...

@@ -61,7 +61,8 @@ extern BitMap *TLBRef;
 // ref: bitmap con el bit de referencia de cada página
 // size: cantidad de páginas
 // next: ultima página sin referenciar
-extern int secondChance(BitMap *ref, int next, int cant);
+// debug: string para debuggear
+extern int secondChance(BitMap *ref, int next, int cant, const char* debug);
 
 #endif
 

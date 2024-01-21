@@ -46,13 +46,13 @@ public:
   TranslationEntry *EntryFromPhysPage(unsigned physpage);
   void printPT();
 
-private:
-  // Assume linear page table translation for now!
-  TranslationEntry *pageTable;
-
   // Number of pages in the virtual
   // address space
   unsigned int numPages;
+
+private:
+  // Assume linear page table translation for now!
+  TranslationEntry *pageTable;
 };
 
 #endif // ADDRSPACE_H

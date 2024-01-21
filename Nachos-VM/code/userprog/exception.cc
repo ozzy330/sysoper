@@ -26,26 +26,52 @@
 #include "system.h"
 #include <cstring>
 
-void returnFromSystemCall() {
+void returnFromSystemCall(bool error = false) {
 
-  machine->WriteRegister(PrevPCReg,
-                         machine->ReadRegister(PCReg)); // PrevPC <- PC
-  machine->WriteRegister(PCReg,
-                         machine->ReadRegister(NextPCReg)); // PC <- NextPC
-  machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg) +
-                                        4); // NextPC <- NextPC + 4
+  if (!error) {
+    machine->WriteRegister(PrevPCReg,
+                           machine->ReadRegister(PCReg)); // PrevPC <- PC
+    machine->WriteRegister(PCReg,
+                           machine->ReadRegister(NextPCReg)); // PC <- NextPC
+    machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg) +
+                                          4); // NextPC <- NextPC + 4
+  }
 } // returnFromSystemCall
 
 // Lee 'size' bytes desde la memoria en la direccion 'address'
-const char *NachosReadMem(int size, int address) {
+const char *NachosReadMem(const char *buff, int size, int address) {
   const char *buffer = new char[size];
+  bool error = false;
   for (int i = 0; i < size; i++) {
-    machine->ReadMem(address + i, 1, (int *)&buffer[i]);
+    if (!machine->ReadMem(address + i, 1, (int *)&buffer[i], "ReadMem")) {
+      return NULL;
+    }
     if (buffer[i] == '\0') {
       DEBUG('u', "End of string before size %d\n", size);
       break;
     }
   }
+
+  int vpn = (unsigned)address / PageSize;
+  int offset = (unsigned)address % PageSize;
+  TranslationEntry *entry = currentThread->space->EntryFromVirtPage(vpn);
+
+  DEBUG('q', "Escrito a memoria [%d - %d] %s\n", vpn, offset, buffer);
+  for (int offs = 0; offs < SectorSize; offs++) {
+    DEBUG(
+        'q', "%x",
+        machine->mainMemory[(entry->physicalPage * PageSize + offset) + offs]);
+  }
+  DEBUG('q', "\n");
+
+#ifdef VM
+  DEBUG('q', "Escrito a swap [%d - %d] %s\n", vpn, offset, buffer);
+  for (int offs = 0; offs < SectorSize; offs++) {
+    DEBUG('q', "%x",
+          swapSpace[(entry->swapSector * SectorSize + offset) + offs]);
+  }
+  DEBUG('q', "\n");
+#endif
   return buffer;
 }
 
@@ -107,9 +133,13 @@ void NachOS_Exec() { // System call 2
   newT->id = runningThreads->SecureFind();
   DEBUG('u', "Running thread %d\n", currentThread->id);
   machine->WriteRegister(2, newT->id);
-  const char *filename = NachosReadMem(100, machine->ReadRegister(4));
-  newT->Fork(NachosExecThread, (void *)filename);
-  returnFromSystemCall();
+  const char *filename = NachosReadMem(filename, 100, machine->ReadRegister(4));
+  if (filename == NULL) {
+    returnFromSystemCall(true);
+  } else {
+    newT->Fork(NachosExecThread, (void *)filename);
+    returnFromSystemCall();
+  }
 }
 
 /*
@@ -163,61 +193,48 @@ void NachOS_Write() { // System call 6
   int size = machine->ReadRegister(5); // Read size to write
   int addr = machine->ReadRegister(4); // addres to read
 
-  buffer = NachosReadMem(size, addr);
-  OpenFileId descriptor = machine->ReadRegister(6); // Read file descriptor
+  buffer = NachosReadMem(buffer, size, addr);
+  if (buffer != NULL) {
+    OpenFileId descriptor = machine->ReadRegister(6); // Read file descriptor
 
-  int vpn = (unsigned)addr / PageSize;
-  int offset = (unsigned)addr % PageSize;
-  TranslationEntry *entry = currentThread->space->EntryFromVirtPage(vpn);
-  DEBUG('q', "Escrito a memoria [%d - %d] %s\n", vpn, offset, buffer);
-  for (int offs = 0; offs < SectorSize; offs++) {
-    DEBUG('q', "%x", machine->mainMemory[(entry->physicalPage * PageSize + offset) + offs]);
-  }
-  DEBUG('q', "\n");
+    // INFO: los archivos 0, 1, 2 están reservados
 
-#ifdef VM
-  DEBUG('q', "Escrito a swap [%d - %d] %s\n", vpn, offset, buffer);
-  for (int offs = 0; offs < SectorSize; offs++) {
-    DEBUG('q', "%x", swapSpace[(entry->swapSector * SectorSize + offset) + offs]);
-  }
-  DEBUG('q', "\n");
-#endif
-
-  // INFO: los archivos 0, 1, 2 están reservados
-
-  // Need a semaphore to synchronize access to console
-  // Console->P();
-  switch (descriptor) {
-  case ConsoleInput: // User could not write to standard input
-    machine->WriteRegister(2, -1);
-    break;
-  case ConsoleOutput:
-    printf("%s", buffer);
-    fflush(stdout);
-    break;
-  case ConsoleError: // This trick permits to write integers to console
-    printf("%d\n", machine->ReadRegister(4));
-    break;
-  default: // All other opened files
-    // Verify if the file is opened, if not return -1 in r2
-    if (!nachosTablita->isOpened(descriptor)) {
+    // Need a semaphore to synchronize access to console
+    // Console->P();
+    switch (descriptor) {
+    case ConsoleInput: // User could not write to standard input
       machine->WriteRegister(2, -1);
       break;
+    case ConsoleOutput:
+      printf("%s", buffer);
+      fflush(stdout);
+      break;
+    case ConsoleError: // This trick permits to write integers to console
+      printf("%d\n", machine->ReadRegister(4));
+      break;
+    default: // All other opened files
+      // Verify if the file is opened, if not return -1 in r2
+      if (!nachosTablita->isOpened(descriptor)) {
+        machine->WriteRegister(2, -1);
+        break;
+      }
+      // Get the unix handle from our table for open files
+      int unixhandle = nachosTablita->getUnixHandle(descriptor);
+      // Do the read from the already opened Unix file
+      WriteFile(unixhandle, buffer, size);
+      // Return the number of chars read from user, via r2
+      machine->WriteRegister(2, size);
+      break;
     }
-    // Get the unix handle from our table for open files
-    int unixhandle = nachosTablita->getUnixHandle(descriptor);
-    // Do the read from the already opened Unix file
-    WriteFile(unixhandle, buffer, size);
-    // Return the number of chars read from user, via r2
-    machine->WriteRegister(2, size);
-    break;
-  }
-  // Update simulation stats, see details in Statistics class in
-  // machine/stats.cc
-  stats->numDiskWrites += size;
-  // Console->V();
+    // Update simulation stats, see details in Statistics class in
+    // machine/stats.cc
+    stats->numDiskWrites += size;
+    // Console->V();
 
-  returnFromSystemCall(); // Update the PC registers
+    returnFromSystemCall(); // Update the PC registers
+  } else {
+    returnFromSystemCall(true);
+  }
 }
 
 /*
@@ -232,7 +249,7 @@ void NachOS_Read() { // System call 7
   char buffer[size];
   int readed = ReadPartial(unixhandle, buffer, size);
   for (int offset = 0; offset < size; offset++) {
-    machine->WriteMem(dir_buffer + offset, 1, buffer[offset]);
+    machine->WriteMem(dir_buffer + offset, 1, buffer[offset], "NachOS_Read");
   }
   DEBUG('q', "Leido de memoria [%d] %s\n", dir_buffer, buffer);
   stats->numDiskReads += size;
@@ -554,9 +571,8 @@ void ExceptionHandler(ExceptionType which) {
     }
     break;
 
-  case PageFaultException: 
+  case PageFaultException:
     break;
-  
 
   case ReadOnlyException:
     printf("Read Only exception (%d)\n", which);

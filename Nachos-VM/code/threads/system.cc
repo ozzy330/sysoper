@@ -288,21 +288,23 @@ void Cleanup() {
 }
 
 #ifdef USER_PROGRAM
-int secondChance(BitMap *ref, int next, int cant) {
+int secondChance(BitMap *ref, int next, int cant, const char *debug) {
   int to_replace = next;
   bool replaced = false;
   while (!replaced) {
-    if (ref->SecureTest(to_replace)) {
-      DEBUG('y', "\t-- PAG [%d/%d] -> REF: FALSE \n", to_replace, cant - 1);
-      ref->SecureClear(to_replace);
+    if (ref->Test(to_replace)) {
+      DEBUG('3', "\t\t\t PAG [%d/%d] -> REF: FALSE  (%s)\n", to_replace,
+            cant - 1, debug);
+      ref->Clear(to_replace);
       to_replace = (to_replace == cant - 1) ? 0 : ++to_replace;
     } else {
-      ref->SecureMark(to_replace);
+      ref->Mark(to_replace);
       replaced = true;
-      DEBUG('y', "\t-- PAG [%d/%d] -> REF: TRUE \n", to_replace, cant - 1);
+      DEBUG('3', "\t\t\t PAG [%d/%d] -> REF: TRUE (%s)\n", to_replace, cant - 1,
+            debug);
     }
   }
-  DEBUG('y', "\t-- REMPLAZADA PAG [%d]\n", to_replace, cant - 1);
+  DEBUG('3', "\t\t\t REMPLAZADA PAG [%d]\n", to_replace, cant - 1);
   return to_replace;
 }
 #endif

@@ -16,6 +16,7 @@
 // of liability and disclaimer of warranty provisions.
 
 #include "addrspace.h"
+#include "bitmap.h"
 #include "copyright.h"
 #include "machine.h"
 #include "noff.h"
@@ -207,18 +208,32 @@ AddrSpace::AddrSpace(const AddrSpace &source) : numPages(source.numPages) {
   for (i = numPages - numStackPages; i < numPages; i++) {
     this->pageTable[i].virtualPage = i;
 #ifndef VM
-    this->pageTable[i].swapSector = 0;
+    this->pageTable[i].swapSector = -1;
     this->pageTable[i].physicalPage = MapitaBits->SecureFind();
     this->pageTable[i].valid = true;
 #else
     this->pageTable[i].swapSector = swapSectors->SecureFind();
-    this->pageTable[i].physicalPage = 0;
+    this->pageTable[i].physicalPage = -1;
     // NOTE: VM siempre inicia como falsa
     this->pageTable[i].valid = false;
 #endif
     this->pageTable[i].readOnly = false;
     this->pageTable[i].use = false;
     this->pageTable[i].dirty = false;
+  }
+
+  DEBUG('1', "PT FOR %s:\n", currentThread->getName());
+  for (i = 0; i < currentThread->space->numPages; i++) {
+    TranslationEntry pt = *currentThread->space->EntryFromVirtPage(i);
+    DEBUG('1',
+          "[%d] VP %d | PP %d | SWP %d | VAL %d | DTY %d : ",i, pt.virtualPage,
+          pt.physicalPage, pt.swapSector, pt.valid, pt.dirty);
+    if (pt.valid == true) {
+      for (int j = 0; j < 15; j++) {
+        DEBUG('1', "%x", machine->mainMemory[pt.physicalPage * PageSize + j]);
+      }
+    }
+    DEBUG('1', "\n");
   }
 
   for (i = 0; i < numPages; i++) {
@@ -250,7 +265,9 @@ AddrSpace::~AddrSpace() {
   DEBUG('x', "Marcando memoria como libre\n");
   // Marca como libre el espacio de memoria que se ocupaba
   for (int page = 0; page < numPages; page++) {
-    MapitaBits->SecureClear(this->pageTable[page].physicalPage);
+    if (this->pageTable[page].valid) {
+      MapitaBits->SecureClear(this->pageTable[page].physicalPage);
+    }
 #ifdef VM
     swapSectors->SecureClear(this->pageTable[page].swapSector);
 #endif
@@ -325,16 +342,22 @@ void AddrSpace::RestoreState() {
   machine->pageTableSize = numPages;
 #else
 
-  DEBUG('y', "\t||| RESTORE TLB -> NULL {%s}\n", currentThread->getName());
+  DEBUG('1', "\t||| RESTORE TLB -> NULL {%s}\n", currentThread->getName());
   machine->tlb = new TranslationEntry[TLBSize];
   machine->nextTLB = 0;
 
-  DEBUG('o', " ____ESTADO SWAP____\n");
-  DEBUG('o', "[");
-  for (int i = 0; i < PageSize; i++) {
-    DEBUG('o', "%x", swapSpace[PageSize + i]);
+  for(int i = 0; i < this->numPages; i++){
+    this->pageTable[i].valid = false;
+    this->pageTable[i].physicalPage = -1;
+    DEBUG('1', "\t||| RESTORING VPN %d\n", i);
   }
-  DEBUG('o', "]\n");
+
+  // DEBUG('o', " ____ESTADO SWAP____\n");
+  // DEBUG('o', "[");
+  // for (int i = 0; i < PageSize; i++) {
+  //   DEBUG('o', "%x", swapSpace[PageSize + i]);
+  // }
+  // DEBUG('o', "]\n");
 
 #endif
 }
@@ -348,10 +371,7 @@ TranslationEntry *AddrSpace::EntryFromVirtPage(unsigned virtpage) {
 TranslationEntry *AddrSpace::EntryFromPhysPage(unsigned physpage) {
   for (int vp = 0; vp < numPages; vp++) {
     TranslationEntry entry = this->pageTable[vp];
-    if (entry.physicalPage == physpage && entry.valid == true) {
-      DEBUG('y', "\t-- ENTRY VPN [%d] PPN [%d] SEC [%d]\n",
-            this->pageTable[vp].virtualPage, this->pageTable[vp].physicalPage,
-            this->pageTable[vp].swapSector);
+    if (entry.physicalPage == physpage && entry.valid) {
       return &this->pageTable[vp];
     }
   }

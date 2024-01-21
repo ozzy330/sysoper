@@ -128,16 +128,17 @@ public:
 
   // Routines internal to the machine simulation -- DO NOT call these
 
-  void OneInstruction(Instruction *instr);
   // Run one instruction of a user program.
-  void DelayedLoad(int nextReg, int nextVal);
-  // Do a pending delayed load (modifying a reg)
+  void OneInstruction(Instruction *instr);
 
-  bool ReadMem(int addr, int size, int *value);
-  bool WriteMem(int addr, int size, int value);
+  // Do a pending delayed load (modifying a reg)
+  void DelayedLoad(int nextReg, int nextVal);
+
   // Read or write 1, 2, or 4 bytes of virtual
   // memory (at addr).  Return false if a
   // correct translation couldn't be found.
+  bool ReadMem(int addr, int size, int *value, const char* debug);
+  bool WriteMem(int addr, int size, int value, const char* debug);
 
   ExceptionType Translate(int virtAddr, int *physAddr, int size, bool writing);
   // Translate an address, and check for

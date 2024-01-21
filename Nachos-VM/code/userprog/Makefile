@@ -742,14 +742,14 @@ addrspace.o: ../userprog/addrspace.cc /usr/include/stdc-predef.h \
  /usr/include/bits/types/FILE.h /usr/include/bits/types/struct_FILE.h \
  /usr/include/bits/types/cookie_io_functions_t.h \
  /usr/include/bits/stdio_lim.h /usr/include/string.h \
- /usr/include/strings.h ../machine/translate.h ../machine/machine.h \
- ../machine/disk.h ../machine/translate.h ../bin/noff.h \
- ../threads/system.h ../machine/interrupt.h ../threads/list.h \
- ../threads/utility.h ../threads/scheduler.h ../threads/list.h \
- ../threads/thread.h ../userprog/addrspace.h ../machine/stats.h \
- ../machine/timer.h ../userprog/bitmap.h ../filesys/openfile.h \
- ../threads/synch.h ../machine/disk.h ../userprog/nachostablita.h \
- ../userprog/bitmap.h
+ /usr/include/strings.h ../machine/translate.h ../userprog/bitmap.h \
+ ../filesys/openfile.h ../threads/synch.h ../threads/list.h \
+ ../threads/utility.h ../threads/thread.h ../userprog/addrspace.h \
+ ../machine/machine.h ../machine/disk.h ../machine/translate.h \
+ ../bin/noff.h ../threads/system.h ../machine/interrupt.h \
+ ../threads/list.h ../threads/scheduler.h ../machine/stats.h \
+ ../machine/timer.h ../userprog/bitmap.h ../machine/disk.h \
+ ../userprog/nachostablita.h
 bitmap.o: ../userprog/bitmap.cc /usr/include/stdc-predef.h \
  ../userprog/bitmap.h ../threads/copyright.h ../threads/utility.h \
  ../threads/copyright.h ../machine/sysdep.h /usr/include/c++/13/stdlib.h \
