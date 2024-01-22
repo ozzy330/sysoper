@@ -17,9 +17,9 @@
  - [x] Tabla de archivos abiertos
 
 ##  Memoria virtual
-- [ ] TLB funcional
-- [ ] SWAP
-- [ ] Algoritmos de remplazo `Second Chance`
+- [x] TLB funcional
+- [x] SWAP
+- [x] Algoritmos de remplazo `Second Chance`
 
 <!-- - [ ] Llamados al sistema para Sockets (obligatorios para el cliente) -->
 <!--  - [ ] SC_Socket, SC_Connect, Read, Write (client) -->
