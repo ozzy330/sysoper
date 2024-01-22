@@ -222,12 +222,17 @@ AddrSpace::AddrSpace(const AddrSpace &source) : numPages(source.numPages) {
     this->pageTable[i].dirty = false;
   }
 
+#ifdef VM
+  for (i = numPages - numStackPages; i < numPages; i++) {
+    // NOTE: VM siempre inicia como falsa
+    this->pageTable[i].valid = false;
+  }
+#endif
   DEBUG('1', "PT FOR %s:\n", currentThread->getName());
   for (i = 0; i < currentThread->space->numPages; i++) {
     TranslationEntry pt = *currentThread->space->EntryFromVirtPage(i);
-    DEBUG('1',
-          "[%d] VP %d | PP %d | SWP %d | VAL %d | DTY %d : ",i, pt.virtualPage,
-          pt.physicalPage, pt.swapSector, pt.valid, pt.dirty);
+    DEBUG('1', "[%d] VP %d | PP %d | SWP %d | VAL %d | DTY %d : ", i,
+          pt.virtualPage, pt.physicalPage, pt.swapSector, pt.valid, pt.dirty);
     if (pt.valid == true) {
       for (int j = 0; j < 15; j++) {
         DEBUG('1', "%x", machine->mainMemory[pt.physicalPage * PageSize + j]);
@@ -345,12 +350,6 @@ void AddrSpace::RestoreState() {
   DEBUG('1', "\t||| RESTORE TLB -> NULL {%s}\n", currentThread->getName());
   machine->tlb = new TranslationEntry[TLBSize];
   machine->nextTLB = 0;
-
-  for(int i = 0; i < this->numPages; i++){
-    this->pageTable[i].valid = false;
-    this->pageTable[i].physicalPage = -1;
-    DEBUG('1', "\t||| RESTORING VPN %d\n", i);
-  }
 
   // DEBUG('o', " ____ESTADO SWAP____\n");
   // DEBUG('o', "[");

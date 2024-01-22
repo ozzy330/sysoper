@@ -7,119 +7,93 @@ rm eddep makedep
 echo '# DEPENDENCIES MUST END AT END OF FILE' >> Makefile
 echo '# IF YOU PUT STUFF HERE IT WILL GO AWAY' >> Makefile
 echo '# see make depend above' >> Makefile
-make: 'nachos' is up to date.
+g++ -g -Wall -Wshadow -I../bin -I../filesys -I../userprog -I../threads -I../machine -DUSER_PROGRAM -DFILESYS_NEEDED -DFILESYS_STUB -DHOST_x86_64 -DHOST_LINUX -DCHANGED -c ../machine/translate.cc
+g++ main.o scheduler.o synch.o system.o thread.o utility.o threadtest.o interrupt.o stats.o sysdep.o timer.o preemptive.o diningph.o addrspace.o bitmap.o exception.o progtest.o console.o machine.o mipssim.o translate.o nachostablita.o switch.o  -o nachos
 
 
 Iniciando Shell en NachOS:
 
-MEM  (VPN 0) [3400c0000800c21200000224c00080ffffffe03000010224c00080ffffffe03000020224c00080ffffffe03000030224c00080ffffffe03000040224c00080ffffffe03000050224c00080ffffffe03000060224c00080ffffffe030000]
->> DONE [0:R] VPN: 0 OFFS: 0
-MEM  (VPN 0) [3400c0000800c21200000224c00080ffffffe03000010224c00080ffffffe03000020224c00080ffffffe03000030224c00080ffffffe03000040224c00080ffffffe03000050224c00080ffffffe03000060224c00080ffffffe030000]
->> DONE [1:R] VPN: 0 OFFS: 4
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [2:R] VPN: 1 OFFS: 80
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [3:R] VPN: 1 OFFS: 84
-MEM  (VPN 13) [00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000]
->> DONE [4:W] VPN: 13 OFFS: 108
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [5:R] VPN: 1 OFFS: 88
-MEM  (VPN 13) [00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000]
->> DONE [6:W] VPN: 13 OFFS: 104
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [7:R] VPN: 1 OFFS: 92
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [8:R] VPN: 1 OFFS: 96
-MEM  (VPN 13) [00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000]
->> DONE [9:W] VPN: 13 OFFS: 112
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [10:R] VPN: 1 OFFS: 100
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [11:R] VPN: 1 OFFS: 104
-MEM  (VPN 13) [00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000]
->> DONE [12:W] VPN: 13 OFFS: 116
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [13:R] VPN: 1 OFFS: 64
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [14:R] VPN: 1 OFFS: 68
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [15:R] VPN: 1 OFFS: 108
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [16:R] VPN: 1 OFFS: 112
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [17:R] VPN: 1 OFFS: 116
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [18:R] VPN: 1 OFFS: 120
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [19:R] VPN: 1 OFFS: 32
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [20:R] VPN: 1 OFFS: 36
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [21:R] VPN: 1 OFFS: 40
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [22:R] VPN: 1 OFFS: 44
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [23:R] VPN: 1 OFFS: 124
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [24:R] VPN: 2 OFFS: 0
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [25:R] VPN: 2 OFFS: 44
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [26:R] VPN: 2 OFFS: 48
-MEM  (VPN 13) [00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000]
->> DONE [27:W] VPN: 13 OFFS: 84
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [28:R] VPN: 2 OFFS: 52
-MEM  (VPN 13) [00000000000000000000000000000000000000000000000000000000000000000000000000000000000041000000000000000000000080000000000000000000]
->> DONE [29:W] VPN: 13 OFFS: 80
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [30:R] VPN: 2 OFFS: 56
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [31:R] VPN: 2 OFFS: 60
-MEM  (VPN 13) [00000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffd860041000000000000000000000080000000000000000000]
->> DONE [32:W] VPN: 13 OFFS: 88
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [33:R] VPN: 2 OFFS: 64
-MEM  (VPN 13) [00000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffd860041001000000000000000000080000000000000000000]
->> DONE [34:R] VPN: 13 OFFS: 88
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [35:R] VPN: 2 OFFS: 68
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [36:R] VPN: 2 OFFS: 72
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [37:R] VPN: 2 OFFS: 76
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [38:R] VPN: 2 OFFS: 80
-MEM  (VPN 13) [00000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffd860041001000000000000000000080000000000000000000]
->> DONE [39:W] VPN: 13 OFFS: 88
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [40:R] VPN: 2 OFFS: 84
-MEM  (VPN 13) [00000000000000000000000000000000000000000000000000000000000000000000000000000000ffffffd860041000000000000000000000080000000000000000000]
->> DONE [41:R] VPN: 13 OFFS: 88
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [42:R] VPN: 2 OFFS: 88
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [43:R] VPN: 2 OFFS: 92
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [44:R] VPN: 2 OFFS: 96
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [45:R] VPN: 2 OFFS: 100
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [46:R] VPN: 2 OFFS: 112
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [47:R] VPN: 2 OFFS: 116
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [48:R] VPN: 2 OFFS: 120
-MEM  (VPN 2) [104240043c202ffffff8424705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd27ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf180ffffffc2ffffff8f1032417043140000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400006800800000043c282ffffff8424705242000c]
->> DONE [49:R] VPN: 2 OFFS: 124
-MEM  (VPN 3) [106242c00c0000180ffffffc2ffffff8f000010432455008180ffffffc3ffffffaf7e0080000180ffffffc0ffffffaf180ffffffc2ffffff8f000050432830601400007e00800000043c302ffffff8424705242000c106242c00c0000180ffffffc2ffffff8f00001043246b008180ffffffc3ffffffaf0043c382ffffff8424]
->> DONE [50:R] VPN: 3 OFFS: 0
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [51:R] VPN: 1 OFFS: 0
-MEM  (VPN 1) [70224c00080ffffffe03000080224c00080ffffffe03000090224c00080ffffffe030000a0224c00080ffffffe03000080ffffffe03000000000000ffffffe8ffffffffffffffbd27140ffffffbfffffffaf100ffffffbeffffffaf21fffffff0ffffffa03180ffffffc4ffffffaf3000c1c0ffffffc5ffffffaf0043c2c1ffffff84242800c00004b00c]
->> DONE [52:R] VPN: 1 OFFS: 4
-MEM  (VPN 4) [705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd274d61696e2020a0486f6c612031a0486f6c612032a046696e206465a00000000000000000000000000000000000000000000000000000000000000000]
->> DONE [53:R] VPN: 4 OFFS: 40
-MEM  (VPN 4) [705242000c1062421ffffffe8ffffffc03140ffffffbfffffff8f100ffffffbeffffff8f80ffffffe03180ffffffbd274d61696e2020a0486f6c612031a0486f6c612032a046696e206465a00000000000000000000000000000000000000000000000000000000000000000]
->> DONE [54:R] VPN: 4 OFFS: 41
+>> DONE [0:R] VPN: 0 OFFS: 0 {INSTR} === main
+>> DONE [1:R] VPN: 0 OFFS: 4 {INSTR} === main
+>> DONE [1:R] VPN: 4 OFFS: 0 {INSTR} === main
+>> DONE [1:R] VPN: 4 OFFS: 4 {INSTR} === main
+>> DONE [2:W] VPN: 13 OFFS: 108 {SUBU} === main
+>> DONE [3:R] VPN: 4 OFFS: 8 {INSTR} === main
+>> DONE [4:W] VPN: 13 OFFS: 104 {SUBU} === main
+>> DONE [5:R] VPN: 4 OFFS: 12 {INSTR} === main
+>> DONE [6:R] VPN: 4 OFFS: 16 {INSTR} === main
+>> DONE [6:R] VPN: 3 OFFS: 112 {INSTR} === main
+>> DONE [7:R] VPN: 3 OFFS: 116 {INSTR} === main
+>> DONE [7:R] VPN: 4 OFFS: 20 {INSTR} === main
+>> DONE [8:W] VPN: 13 OFFS: 4 {SUBU} === main
+>> DONE [9:R] VPN: 4 OFFS: 24 {INSTR} === main
+>> DONE [10:R] VPN: 4 OFFS: 28 {INSTR} === main
+>> DONE [10:W] VPN: 13 OFFS: 8 {SUBU} === main
+>> DONE [11:R] VPN: 4 OFFS: 32 {INSTR} === main
+>> DONE [12:R] VPN: 4 OFFS: 36 {INSTR} === main
+>> DONE [12:W] VPN: 13 OFFS: 16 {SB} === main
+>> DONE [13:R] VPN: 4 OFFS: 40 {INSTR} === main
+>> DONE [14:R] VPN: 4 OFFS: 44 {INSTR} === main
+>> DONE [14:W] VPN: 13 OFFS: 17 {SB} === main
+>> DONE [15:R] VPN: 4 OFFS: 48 {INSTR} === main
+>> DONE [16:R] VPN: 4 OFFS: 52 {INSTR} === main
+>> DONE [16:R] VPN: 4 OFFS: 56 {INSTR} === main
+>> DONE [16:R] VPN: 4 OFFS: 60 {INSTR} === main
+>> DONE [16:R] VPN: 13 OFFS: 8 {LW} === main
+>> DONE [17:R] VPN: 4 OFFS: 64 {INSTR} === main
+>> DONE [18:R] VPN: 4 OFFS: 68 {INSTR} === main
+>> DONE [18:R] VPN: 1 OFFS: 0 {INSTR} === main
+>> DONE [19:R] VPN: 1 OFFS: 4 {INSTR} === main
+>> DONE [19:R] VPN: 13 OFFS: 16 {ReadMem} === main
+>> DONE [20:R] VPN: 13 OFFS: 17 {ReadMem} === main
+-->> DONE [20:R] VPN: 1 OFFS: 8 {INSTR} === main
+>> DONE [21:R] VPN: 1 OFFS: 12 {INSTR} === main
+>> DONE [21:R] VPN: 4 OFFS: 72 {INSTR} === main
+>> DONE [22:W] VPN: 13 OFFS: 96 {SUBU} === main
+>> DONE [23:R] VPN: 4 OFFS: 76 {INSTR} === main
+>> DONE [24:R] VPN: 4 OFFS: 80 {INSTR} === main
+>> DONE [24:R] VPN: 13 OFFS: 96 {LW} === main
+>> DONE [25:R] VPN: 4 OFFS: 84 {INSTR} === main
+>> DONE [26:R] VPN: 4 OFFS: 88 {INSTR} === main
+>> DONE [26:R] VPN: 4 OFFS: 92 {INSTR} === main
+>> DONE [26:R] VPN: 4 OFFS: 96 {INSTR} === main
+>> DONE [26:R] VPN: 4 OFFS: 100 {INSTR} === main
+>> DONE [26:R] VPN: 13 OFFS: 4 {LW} === main
+>> DONE [27:R] VPN: 4 OFFS: 104 {INSTR} === main
+>> DONE [28:R] VPN: 4 OFFS: 108 {INSTR} === main
+>> DONE [28:R] VPN: 0 OFFS: 112 {INSTR} === main
+>> DONE [29:R] VPN: 0 OFFS: 116 {INSTR} === main
+>> DONE [29:W] VPN: 13 OFFS: 32 {NachOS_Read} === main
+>> DONE [30:R] VPN: 0 OFFS: 120 {INSTR} === main
+>> DONE [31:R] VPN: 0 OFFS: 124 {INSTR} === main
+>> DONE [31:R] VPN: 4 OFFS: 112 {INSTR} === main
+>> DONE [32:R] VPN: 4 OFFS: 116 {INSTR} === main
+>> DONE [32:R] VPN: 13 OFFS: 96 {LW} === main
+>> DONE [33:R] VPN: 4 OFFS: 120 {INSTR} === main
+>> DONE [34:R] VPN: 4 OFFS: 124 {INSTR} === main
+>> DONE [34:R] VPN: 5 OFFS: 0 {INSTR} === main
+>> DONE [35:R] VPN: 5 OFFS: 4 {INSTR} === main
+>> DONE [35:R] VPN: 5 OFFS: 8 {INSTR} === main
+>> DONE [35:R] VPN: 5 OFFS: 12 {INSTR} === main
+>> DONE [35:R] VPN: 5 OFFS: 16 {INSTR} === main
+>> DONE [35:W] VPN: 13 OFFS: 96 {SUBU} === main
+>> DONE [36:R] VPN: 5 OFFS: 20 {INSTR} === main
+>> DONE [37:R] VPN: 13 OFFS: 32 {LBU} === main
+>> DONE [38:R] VPN: 5 OFFS: 24 {INSTR} === main
+>> DONE [39:R] VPN: 5 OFFS: 28 {INSTR} === main
+>> DONE [39:R] VPN: 5 OFFS: 32 {INSTR} === main
+>> DONE [39:R] VPN: 4 OFFS: 76 {INSTR} === main
+>> DONE [40:R] VPN: 4 OFFS: 80 {INSTR} === main
+>> DONE [40:R] VPN: 13 OFFS: 96 {LW} === main
+>> DONE [41:R] VPN: 4 OFFS: 84 {INSTR} === main
+>> DONE [42:R] VPN: 4 OFFS: 88 {INSTR} === main
+>> DONE [42:R] VPN: 4 OFFS: 92 {INSTR} === main
+>> DONE [42:R] VPN: 4 OFFS: 96 {INSTR} === main
+>> DONE [42:R] VPN: 4 OFFS: 100 {INSTR} === main
+>> DONE [42:R] VPN: 13 OFFS: 4 {LW} === main
+>> DONE [43:R] VPN: 4 OFFS: 104 {INSTR} === main
+>> DONE [44:R] VPN: 4 OFFS: 108 {INSTR} === main
+>> DONE [44:R] VPN: 0 OFFS: 112 {INSTR} === main
+>> DONE [45:R] VPN: 0 OFFS: 116 {INSTR} === main
+>> DONE [45:W] VPN: 13 OFFS: 33 {NachOS_Read} === main
 ------- TERMINADO POR DEBUG ------- 

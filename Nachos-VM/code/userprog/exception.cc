@@ -26,22 +26,18 @@
 #include "system.h"
 #include <cstring>
 
-void returnFromSystemCall(bool error = false) {
-
-  if (!error) {
-    machine->WriteRegister(PrevPCReg,
-                           machine->ReadRegister(PCReg)); // PrevPC <- PC
-    machine->WriteRegister(PCReg,
-                           machine->ReadRegister(NextPCReg)); // PC <- NextPC
-    machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg) +
-                                          4); // NextPC <- NextPC + 4
-  }
+void returnFromSystemCall() {
+  machine->WriteRegister(PrevPCReg,
+                         machine->ReadRegister(PCReg)); // PrevPC <- PC
+  machine->WriteRegister(PCReg,
+                         machine->ReadRegister(NextPCReg)); // PC <- NextPC
+  machine->WriteRegister(NextPCReg, machine->ReadRegister(NextPCReg) +
+                                        4); // NextPC <- NextPC + 4
 } // returnFromSystemCall
 
 // Lee 'size' bytes desde la memoria en la direccion 'address'
 const char *NachosReadMem(const char *buff, int size, int address) {
   const char *buffer = new char[size];
-  bool error = false;
   for (int i = 0; i < size; i++) {
     if (!machine->ReadMem(address + i, 1, (int *)&buffer[i], "ReadMem")) {
       return NULL;
@@ -51,27 +47,6 @@ const char *NachosReadMem(const char *buff, int size, int address) {
       break;
     }
   }
-
-  int vpn = (unsigned)address / PageSize;
-  int offset = (unsigned)address % PageSize;
-  TranslationEntry *entry = currentThread->space->EntryFromVirtPage(vpn);
-
-  DEBUG('q', "Escrito a memoria [%d - %d] %s\n", vpn, offset, buffer);
-  for (int offs = 0; offs < SectorSize; offs++) {
-    DEBUG(
-        'q', "%x",
-        machine->mainMemory[(entry->physicalPage * PageSize + offset) + offs]);
-  }
-  DEBUG('q', "\n");
-
-#ifdef VM
-  DEBUG('q', "Escrito a swap [%d - %d] %s\n", vpn, offset, buffer);
-  for (int offs = 0; offs < SectorSize; offs++) {
-    DEBUG('q', "%x",
-          swapSpace[(entry->swapSector * SectorSize + offset) + offs]);
-  }
-  DEBUG('q', "\n");
-#endif
   return buffer;
 }
 
@@ -134,11 +109,13 @@ void NachOS_Exec() { // System call 2
   DEBUG('u', "Running thread %d\n", currentThread->id);
   machine->WriteRegister(2, newT->id);
   const char *filename = NachosReadMem(filename, 100, machine->ReadRegister(4));
-  if (filename == NULL) {
-    returnFromSystemCall(true);
-  } else {
+  if (filename != NULL) {
     newT->Fork(NachosExecThread, (void *)filename);
     returnFromSystemCall();
+  } else {
+
+    DEBUG('q', "No se pudo leer de archivo...");
+    return;
   }
 }
 
@@ -193,8 +170,30 @@ void NachOS_Write() { // System call 6
   int size = machine->ReadRegister(5); // Read size to write
   int addr = machine->ReadRegister(4); // addres to read
 
+  int vpn = (unsigned)addr / PageSize;
+  int offset = (unsigned)addr % PageSize;
   buffer = NachosReadMem(buffer, size, addr);
   if (buffer != NULL) {
+
+    TranslationEntry *entry = currentThread->space->EntryFromVirtPage(vpn);
+
+    DEBUG('q', "Escrito a memoria [%d - %d] %s\n", vpn, offset, buffer);
+    for (int offs = 0; offs < SectorSize; offs++) {
+      DEBUG('q', "%x",
+            machine
+                ->mainMemory[(entry->physicalPage * PageSize + offset) + offs]);
+    }
+    DEBUG('q', "\n");
+
+#ifdef VM
+    DEBUG('q', "Escrito a swap [%d - %d] %s\n", vpn, offset, buffer);
+    for (int offs = 0; offs < SectorSize; offs++) {
+      DEBUG('q', "%x",
+            swapSpace[(entry->swapSector * SectorSize + offset) + offs]);
+    }
+    DEBUG('q', "\n");
+#endif
+
     OpenFileId descriptor = machine->ReadRegister(6); // Read file descriptor
 
     // INFO: los archivos 0, 1, 2 están reservados
@@ -233,7 +232,8 @@ void NachOS_Write() { // System call 6
 
     returnFromSystemCall(); // Update the PC registers
   } else {
-    returnFromSystemCall(true);
+    DEBUG('q', "No se pudo escribir a [VPN %d - %d]", vpn, offset);
+    return;
   }
 }
 
@@ -248,13 +248,30 @@ void NachOS_Read() { // System call 7
 
   char buffer[size];
   int readed = ReadPartial(unixhandle, buffer, size);
+  bool write_ok = true;
   for (int offset = 0; offset < size; offset++) {
-    machine->WriteMem(dir_buffer + offset, 1, buffer[offset], "NachOS_Read");
+    if (!machine->WriteMem(dir_buffer + offset, 1, buffer[offset],
+                           "NachOS_Read")) {
+      write_ok = false;
+      break;
+    }
   }
-  DEBUG('q', "Leido de memoria [%d] %s\n", dir_buffer, buffer);
-  stats->numDiskReads += size;
-  machine->WriteRegister(2, readed);
-  returnFromSystemCall();
+  int vpn = (unsigned)dir_buffer / PageSize;
+  int offset = (unsigned)dir_buffer % PageSize;
+  if (write_ok) {
+    DEBUG('q', "Leido de memoria [VPN %d - %d]: ", vpn, offset);
+    for (int i = 0; i < size; i++) {
+      DEBUG('q', "%c", buffer[i]);
+    }
+    DEBUG('q', "\n");
+    stats->numDiskReads += size;
+    machine->WriteRegister(2, readed);
+    returnFromSystemCall();
+  } else {
+    DEBUG('q', "No se pudo leer de memoria [VPN %d - %d]\n", vpn, offset);
+    machine->WriteRegister(4, machine->ReadRegister(4) - 1);
+    return;
+  }
 }
 
 /*
@@ -463,6 +480,7 @@ void NachOS_Shutdown() { // System call 25
 void ExceptionHandler(ExceptionType which) {
   int type = machine->ReadRegister(2);
 
+  DEBUG('0', "SYSCALL (%d): %d\n", which, type);
   switch (which) {
 
   case SyscallException:

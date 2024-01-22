@@ -1,64 +1,109 @@
-farroyo@fedora:~/nachos64/code/vm$ ./nachos -d a -x ../test/halt.lab 
-Initializing stack register to 1392
-Reading VA 0x0, size 4
-	Translate 0x0, read: *** no valid TLB entry found for this virtual page!
-Reading VA 0x0, size 4
-	Translate 0x0, read: phys addr = 0x0
-	value read = 0c000044
-Reading VA 0x4, size 4
-	Translate 0x4, read: phys addr = 0x4
-	value read = 00000000
-Reading VA 0x110, size 4
-	Translate 0x110, read: *** no valid TLB entry found for this virtual page!
-Reading VA 0x110, size 4
-	Translate 0x110, read: phys addr = 0x90
-	value read = 27bdffe8
-Reading VA 0x114, size 4
-	Translate 0x114, read: phys addr = 0x94
-	value read = afbf0014
-Writing VA 0x56c, size 4, value 0x8
-	Translate 0x56c, write: *** no valid TLB entry found for this virtual page!
-Reading VA 0x114, size 4
-	Translate 0x114, read: phys addr = 0x94
-	value read = afbf0014
-Writing VA 0x56c, size 4, value 0x8
-	Translate 0x56c, write: phys addr = 0x16c
-Reading VA 0x118, size 4
-	Translate 0x118, read: phys addr = 0x98
-	value read = afbe0010
-Writing VA 0x568, size 4, value 0x0
-	Translate 0x568, write: phys addr = 0x168
-Reading VA 0x11c, size 4
-	Translate 0x11c, read: phys addr = 0x9c
-	value read = 0c000040
-Reading VA 0x120, size 4
-	Translate 0x120, read: phys addr = 0xa0
-	value read = 03a0f021
-Reading VA 0x100, size 4
-	Translate 0x100, read: phys addr = 0x80
-	value read = 03e00008
-Reading VA 0x104, size 4
-	Translate 0x104, read: phys addr = 0x84
-	value read = 00000000
-Reading VA 0x124, size 4
-	Translate 0x124, read: phys addr = 0xa4
-	value read = 0c000004
-Reading VA 0x128, size 4
-	Translate 0x128, read: phys addr = 0xa8
-	value read = 00000000
-Reading VA 0x10, size 4
-	Translate 0x10, read: phys addr = 0x10
-	value read = 24020000
-Reading VA 0x14, size 4
-	Translate 0x14, read: phys addr = 0x14
-	value read = 0000000c
-Shutdown, initiated by user program.
-Machine halting!
+g++ -I../filesys -I../bin -I../vm -I../userprog -I../threads -I../machine -DUSER_PROGRAM  -DFILESYS_NEEDED -DFILESYS_STUB -DVM -DUSE_TLB -DHOST_x86_64 -DHOST_LINUX -DCHANGED -M ../threads/main.cc ../threads/scheduler.cc ../threads/synch.cc ../threads/system.cc ../threads/thread.cc ../threads/utility.cc ../threads/threadtest.cc ../threads/diningph.cc ../machine/interrupt.cc ../machine/sysdep.cc ../machine/stats.cc ../machine/timer.cc ../threads/preemptive.cc ../userprog/addrspace.cc ../userprog/bitmap.cc ../userprog/exception.cc ../userprog/progtest.cc ../machine/console.cc ../machine/machine.cc ../machine/mipssim.cc ../machine/translate.cc ../userprog/nachostablita.cc ../machine/disk.cc > makedep
+echo '/^# DO NOT DELETE THIS LINE/+2,$d' >eddep
+echo '$r makedep' >>eddep
+echo 'wq' >>eddep
+ed - Makefile < eddep
+rm eddep makedep 
+echo '# DEPENDENCIES MUST END AT END OF FILE' >> Makefile
+echo '# IF YOU PUT STUFF HERE IT WILL GO AWAY' >> Makefile
+echo '# see make depend above' >> Makefile
+g++ -g -Wall -Wshadow -I../filesys -I../bin -I../vm -I../userprog -I../threads -I../machine -DUSER_PROGRAM  -DFILESYS_NEEDED -DFILESYS_STUB -DVM -DUSE_TLB -DHOST_x86_64 -DHOST_LINUX -DCHANGED -c ../machine/translate.cc
+g++ main.o scheduler.o synch.o system.o thread.o utility.o threadtest.o interrupt.o stats.o sysdep.o timer.o preemptive.o diningph.o addrspace.o bitmap.o exception.o progtest.o console.o machine.o mipssim.o translate.o nachostablita.o disk.o switch.o  -o nachos
 
-Ticks: total 265, idle 0, system 250, user 15
-Disk I/O: reads 0, writes 3
-Console I/O: reads 0, writes 0
-Paging: faults 3
-Network I/O: packets received 0, sent 0
 
-Cleaning up...
+Iniciando Shell en NachOS:
+
+>> DONE [0:R] VPN: 0 OFFS: 0 {INSTR} === main
+>> DONE [1:R] VPN: 0 OFFS: 4 {INSTR} === main
+>> DONE [1:R] VPN: 4 OFFS: 0 {INSTR} === main
+>> DONE [1:R] VPN: 4 OFFS: 4 {INSTR} === main
+>> DONE [2:R] VPN: 4 OFFS: 4 {INSTR} === main
+>> DONE [2:R] VPN: 4 OFFS: 4 {INSTR} === main
+>> DONE [2:W] VPN: 13 OFFS: 108 {SUBU} === main
+>> DONE [3:R] VPN: 4 OFFS: 8 {INSTR} === main
+>> DONE [4:W] VPN: 13 OFFS: 104 {SUBU} === main
+>> DONE [5:R] VPN: 4 OFFS: 12 {INSTR} === main
+>> DONE [6:R] VPN: 4 OFFS: 16 {INSTR} === main
+>> DONE [6:R] VPN: 3 OFFS: 112 {INSTR} === main
+>> DONE [7:R] VPN: 3 OFFS: 116 {INSTR} === main
+>> DONE [7:R] VPN: 4 OFFS: 20 {INSTR} === main
+>> DONE [8:R] VPN: 4 OFFS: 20 {INSTR} === main
+>> DONE [8:R] VPN: 4 OFFS: 20 {INSTR} === main
+>> DONE [8:W] VPN: 13 OFFS: 4 {SUBU} === main
+>> DONE [9:R] VPN: 4 OFFS: 24 {INSTR} === main
+>> DONE [10:R] VPN: 4 OFFS: 28 {INSTR} === main
+>> DONE [10:W] VPN: 13 OFFS: 8 {SUBU} === main
+>> DONE [11:R] VPN: 4 OFFS: 32 {INSTR} === main
+>> DONE [12:R] VPN: 4 OFFS: 36 {INSTR} === main
+>> DONE [12:W] VPN: 13 OFFS: 16 {SB} === main
+>> DONE [13:R] VPN: 4 OFFS: 40 {INSTR} === main
+>> DONE [14:R] VPN: 4 OFFS: 44 {INSTR} === main
+>> DONE [14:W] VPN: 13 OFFS: 17 {SB} === main
+>> DONE [15:R] VPN: 4 OFFS: 48 {INSTR} === main
+>> DONE [16:R] VPN: 4 OFFS: 52 {INSTR} === main
+>> DONE [16:R] VPN: 4 OFFS: 56 {INSTR} === main
+>> DONE [16:R] VPN: 4 OFFS: 60 {INSTR} === main
+>> DONE [16:R] VPN: 13 OFFS: 8 {LW} === main
+>> DONE [17:R] VPN: 4 OFFS: 64 {INSTR} === main
+>> DONE [18:R] VPN: 4 OFFS: 68 {INSTR} === main
+>> DONE [18:R] VPN: 1 OFFS: 0 {INSTR} === main
+>> DONE [19:R] VPN: 1 OFFS: 4 {INSTR} === main
+>> DONE [19:R] VPN: 1 OFFS: 4 {INSTR} === main
+>> DONE [19:R] VPN: 13 OFFS: 16 {ReadMem} === main
+>> DONE [20:R] VPN: 13 OFFS: 17 {ReadMem} === main
+-->> DONE [20:R] VPN: 1 OFFS: 8 {INSTR} === main
+>> DONE [21:R] VPN: 1 OFFS: 12 {INSTR} === main
+>> DONE [21:R] VPN: 4 OFFS: 72 {INSTR} === main
+>> DONE [22:R] VPN: 4 OFFS: 72 {INSTR} === main
+>> DONE [22:R] VPN: 4 OFFS: 72 {INSTR} === main
+>> DONE [22:W] VPN: 13 OFFS: 96 {SUBU} === main
+>> DONE [23:R] VPN: 4 OFFS: 76 {INSTR} === main
+>> DONE [24:R] VPN: 4 OFFS: 80 {INSTR} === main
+>> DONE [24:R] VPN: 13 OFFS: 96 {LW} === main
+>> DONE [25:R] VPN: 4 OFFS: 84 {INSTR} === main
+>> DONE [26:R] VPN: 4 OFFS: 88 {INSTR} === main
+>> DONE [26:R] VPN: 4 OFFS: 92 {INSTR} === main
+>> DONE [26:R] VPN: 4 OFFS: 96 {INSTR} === main
+>> DONE [26:R] VPN: 4 OFFS: 100 {INSTR} === main
+>> DONE [26:R] VPN: 13 OFFS: 4 {LW} === main
+>> DONE [27:R] VPN: 4 OFFS: 104 {INSTR} === main
+>> DONE [28:R] VPN: 4 OFFS: 108 {INSTR} === main
+>> DONE [28:R] VPN: 0 OFFS: 112 {INSTR} === main
+>> DONE [29:R] VPN: 0 OFFS: 116 {INSTR} === main
+>> DONE [29:R] VPN: 0 OFFS: 116 {INSTR} === main
+>> DONE [29:W] VPN: 13 OFFS: 32 {NachOS_Read} === main
+>> DONE [30:R] VPN: 0 OFFS: 120 {INSTR} === main
+>> DONE [31:R] VPN: 0 OFFS: 124 {INSTR} === main
+>> DONE [31:R] VPN: 4 OFFS: 112 {INSTR} === main
+>> DONE [32:R] VPN: 4 OFFS: 116 {INSTR} === main
+>> DONE [32:R] VPN: 4 OFFS: 116 {INSTR} === main
+>> DONE [32:R] VPN: 4 OFFS: 116 {INSTR} === main
+>> DONE [32:R] VPN: 13 OFFS: 96 {LW} === main
+>> DONE [33:R] VPN: 4 OFFS: 120 {INSTR} === main
+>> DONE [34:R] VPN: 4 OFFS: 124 {INSTR} === main
+>> DONE [34:R] VPN: 5 OFFS: 0 {INSTR} === main
+>> DONE [35:R] VPN: 5 OFFS: 4 {INSTR} === main
+>> DONE [35:R] VPN: 5 OFFS: 8 {INSTR} === main
+>> DONE [35:R] VPN: 5 OFFS: 12 {INSTR} === main
+>> DONE [35:R] VPN: 5 OFFS: 16 {INSTR} === main
+>> DONE [35:R] VPN: 5 OFFS: 16 {INSTR} === main
+>> DONE [35:W] VPN: 13 OFFS: 96 {SUBU} === main
+>> DONE [36:R] VPN: 5 OFFS: 20 {INSTR} === main
+>> DONE [37:R] VPN: 13 OFFS: 32 {LBU} === main
+>> DONE [38:R] VPN: 5 OFFS: 24 {INSTR} === main
+>> DONE [39:R] VPN: 5 OFFS: 28 {INSTR} === main
+>> DONE [39:R] VPN: 5 OFFS: 32 {INSTR} === main
+>> DONE [39:R] VPN: 5 OFFS: 36 {INSTR} === main
+>> DONE [39:R] VPN: 13 OFFS: 96 {LW} === main
+>> DONE [40:R] VPN: 5 OFFS: 40 {INSTR} === main
+>> DONE [41:R] VPN: 5 OFFS: 44 {INSTR} === main
+>> DONE [41:R] VPN: 5 OFFS: 48 {INSTR} === main
+>> DONE [41:R] VPN: 5 OFFS: 52 {INSTR} === main
+>> DONE [41:W] VPN: 13 OFFS: 96 {SUBU} === main
+>> DONE [42:R] VPN: 5 OFFS: 56 {INSTR} === main
+>> DONE [43:R] VPN: 5 OFFS: 60 {INSTR} === main
+>> DONE [43:R] VPN: 5 OFFS: 64 {INSTR} === main
+>> DONE [43:W] VPN: 13 OFFS: 32 {SB} === main
+>> DONE [44:R] VPN: 5 OFFS: 68 {INSTR} === main
+>> DONE [45:R] VPN: 13 OFFS: 96 {LW} === main
+------- TERMINADO POR DEBUG ------- 

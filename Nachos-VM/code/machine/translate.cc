@@ -38,9 +38,11 @@
 #include "utility.h"
 
 // extern const int PRUEBA = 503;
-extern const int PRUEBA = 501;
-extern int SALIR = 0;
-extern int DEBUG_NUM = -1;
+extern const int PRUEBA = -1;
+extern int SALIR = 0; 
+extern int DEBUG_NUM = - 1; 
+extern int DEBUG_LASTVPN = -1;
+extern int DEBUG_LASTOFFSET = -1;
 
 // Routines for converting Words and Short Words to and from the
 // simulated machine's format of little endian.  These end up
@@ -107,19 +109,20 @@ bool Machine::ReadMem(int addr, int size, int *value, const char *debug) {
   if (exception != NoException) {
     machine->RaiseException(exception, addr);
     return false;
+  } else {
+    SALIR++;
   }
 
   if (DEBUG_NUM == -1 || DEBUG_NUM == SALIR) {
     DEBUG('c', ">> DONE [%d:R] VPN: %d OFFS: %d {%s} === %s\n", SALIR, vpn,
           offset, debug, currentThread->getName());
   }
-  SALIR++;
 
-  // if (SALIR == PRUEBA) {
-  //   DEBUG('c', "------- TERMINADO POR DEBUG ------- \n");
-  //   machine->RaiseException(BusErrorException, addr);
-  //   return false;
-  // }
+  if (PRUEBA != -1 && SALIR == PRUEBA) {
+    DEBUG('c', "------- TERMINADO POR DEBUG ------- \n");
+    machine->RaiseException(BusErrorException, addr);
+    return false;
+  }
 
   switch (size) {
   case 1:
@@ -176,23 +179,21 @@ bool Machine::WriteMem(int addr, int size, int value, const char *debug) {
 
   if (exception != NoException) {
     machine->RaiseException(exception, addr);
-    if (exception == PageFaultException) {
-      SALIR--;
-    }
     return false;
+  } else {
+    SALIR++;
   }
 
   if (DEBUG_NUM == -1 || DEBUG_NUM == SALIR) {
     DEBUG('c', ">> DONE [%d:W] VPN: %d OFFS: %d {%s} === %s\n", SALIR, vpn,
           offset, debug, currentThread->getName());
   }
-  SALIR++;
 
-  // if (SALIR == PRUEBA) {
-  //   DEBUG('c', "------- TERMINADO POR DEBUG ------- \n");
-  //   machine->RaiseException(BusErrorException, addr);
-  //   return false;
-  // }
+  if (PRUEBA != -1 && SALIR == PRUEBA) {
+    DEBUG('c', "------- TERMINADO POR DEBUG ------- \n");
+    machine->RaiseException(BusErrorException, addr);
+    return false;
+  }
 
   switch (size) {
   case 1:
@@ -465,7 +466,7 @@ ExceptionType Machine::Translate(int virtAddr, int *physAddr, int size,
       DEBUG('1', "[%d] VP %d | PP %d | SWP %d | VAL %d | DTY %d : ", i,
             pt.virtualPage, pt.physicalPage, pt.swapSector, pt.valid, pt.dirty);
       if (pt.valid == true) {
-        for (int j = 0; j < 15; j++) {
+        for (int j = 0; j < PageSize; j++) {
           DEBUG('1', "%x", this->mainMemory[pt.physicalPage * PageSize + j]);
         }
       }
